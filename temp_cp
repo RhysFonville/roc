@@ -1,0 +1,91 @@
+
+void TypeAnalyzer::unify(const Type& t1, const Type& t2) {
+	auto eventual_t1{t1.get_type()};
+	auto eventual_t2{t2.get_type()};
+	if (auto var1 = std::dynamic_pointer_cast<TVariable>(eventual_t1)) {
+		if (auto var2 = std::dynamic_pointer_cast<TVariable>(eventual_t2); var2 && var1->index == var2->index) {
+			return;
+		}
+		if (var1->index < substitution.size() && substitution[var1->index] != Type{} && substitution[var1->index] != t1) {
+			unify(substitution[var1->index], t2);
+			return;
+		}
+		if (occurs_in(var1->index, t2)) { // Infinite type
+			std::cout << "Infinite type.\n";
+			return;
+		}
+		if (var1->index >= substitution.size()) {
+			substitution.resize(var1->index + 1);
+		}
+		substitution[var1->index] = t2;
+		return;
+	}
+	
+	if (auto var2 = std::dynamic_pointer_cast<TVariable>(eventual_t2)) {
+		if (var2->index < substitution.size() && substitution[var2->index] != Type{} && substitution[var2->index] != t2) {
+			unify(t1, substitution[var2->index]);
+			return;
+		}
+		if (occurs_in(var2->index, t1)) { // Infinite type
+			std::cout << "Infinite type.\n";
+			return;
+		}
+		if (var2->index >= substitution.size()) {
+			substitution.resize(var2->index + 1);
+		}
+		substitution[var2->index] = t1;
+		return;
+	}
+	
+	auto cons1 = std::dynamic_pointer_cast<TConstructor>(eventual_t1);
+	auto cons2 = std::dynamic_pointer_cast<TConstructor>(eventual_t2);
+	if (cons1 && cons2) {
+		if (cons1->type != cons2->type /*|| cons1->generics.size() != cons2->generics.size()*/) { // Type mismatch
+			return;
+		}
+		/*
+		for (size_t i = 0; i < cons1->generics.size(); ++i) {
+			unify(cons1->generics[i], cons2->generics[i]);
+		}
+		*/
+		return;
+	}
+
+	// Unification failed
+	std::cout << "Unification failed.\n";
+}
+
+bool TypeAnalyzer::occurs_in(int index, const Type& t) {
+	auto eventual_t{t.get_const_eventual_type()};
+	if (auto var = std::dynamic_pointer_cast<TVariable>(eventual_t)) {
+		if (var->index < substitution.size() && substitution[var->index] != Type{} && substitution[var->index] != t) {
+			return occurs_in(index, substitution[var->index]);
+		}
+		return var->index == index;
+	}
+	if (auto cons = std::dynamic_pointer_cast<TConstructor>(eventual_t)) {
+		//return std::ranges::any_of(cons->generics, [&](const Type& sub) { return occurs_in(index, sub); });
+	}
+	return false;
+}
+
+Type TypeAnalyzer::substitute(const Type& t) {
+	auto eventual_t{t.get_const_eventual_type()};
+	if (auto var = std::dynamic_pointer_cast<TVariable>(eventual_t)) {
+		if (var->index < substitution.size() && substitution[var->index] != Type{} && substitution[var->index] != t) {
+			return substitute(substitution[var->index]);
+		}
+	}
+	if (auto cons = std::dynamic_pointer_cast<TConstructor>(eventual_t)) {
+		std::vector<Type> new_generics{};
+		/*
+		new_generics.reserve(cons->generics.size());
+		for (const auto& sub : cons->generics) {
+			new_generics.push_back(substitute(sub));
+		}
+		*/
+		return Type{std::make_shared<TConstructor>(cons->type/*, std::move(new_generics)*/)};
+	}
+
+	return t;
+}

@@ -1,0 +1,80 @@
+RET main
+
+LABEL % (sz)BASE
+
+MOVE % (sz)STACK
+, % (sz)STACK
+
+MOVE 5
+, 5
+
+MOVE 3
+, 3
+
+NEG _Z3add
+
+MOVE 0
+, 0
+
+PUSH % (sz)BASE
+
+CALL 
+RET _Z3add
+
+LABEL % (sz)BASE
+
+MOVE % (sz)STACK
+, % (sz)STACK
+
+SUB 16
+, 16
+
+MOVE % (sz)ARG5
+, % (sz)ARG5
+
+MOVE % (sz)ARG4
+, % (sz)ARG4
+
+MOVE 48
+, 48
+
+MOVE % (sz)BASE--3
+, % (sz)BASE--3
+
+MOVE % (sz)BASE--1
+, % (sz)BASE--1
+
+ADD % (sz)ARG5
+, % (sz)ARG5
+
+MOVE % (sz)RET
+, % (sz)RET
+
+MOVE % (sz)BASE--2
+, % (sz)BASE--2
+
+ADD % (sz)ARG5
+, % (sz)ARG5
+
+MOVE % (sz)RET
+, % (sz)RET
+
+MOVE 1
+, 1
+
+POP % (sz)BASE--3
+, % (sz)BASE--3
+
+MOVE % (sz)RET
+, % (sz)RET
+
+MOVE 1
+, 1
+
+NEG write
+
+MOVE % (sz)BASE--3
+, % (sz)BASE--3
+
+ARG1 
+CALL 

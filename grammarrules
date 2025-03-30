@@ -1,0 +1,114 @@
+// Based heavily off C grammar
+// Page titled ANSI C Yacc grammar
+
+program: statement* EOF
+
+primary_expression
+	: IDENTIFIER
+	| LITERAL
+	| '(' expression ')'
+
+expression
+	: block_expression
+	| assignment_expression
+
+block_expression
+	: '{' statement* '}'
+
+assignment_expression
+	: conditional_expression
+	| conditional_expression (assignment_operator assignment_expression)*
+
+assignment_operator
+	: '='
+	| '*='
+	| '/='
+	| '+='
+	| '-='
+
+conditional_expression
+	: logical_or_expression
+
+logical_or_expression
+	: logical_and_expression
+	| logical_or_expression (OR_OP logical_and_expression)*
+
+logical_and_expression
+	: equality_expression
+	| logical_and_expression (AND_OP equality_expression)*
+
+equality_expression
+	: relational_expression
+	| equality_expression (EQ_OP relational_expression)*
+	| equality_expression (NE_OP relational_expression)*
+
+relational_expression
+	: additive_expression
+	| relational_expression ('<' additive_expression)*
+	| relational_expression ('>' additive_expression)*
+	| relational_expression (LE_OP additive_expression)*
+	| relational_expression (GE_OP additive_expression)*
+
+additive_expression
+	: multiplicative_expression
+	| additive_expression ('+' multiplicative_expression)*
+	| additive_expression ('-' multiplicative_expression)*
+
+multiplicative_expression
+	: unary_expression
+	| multiplicative_expression (MULT_OP unary_expression)*
+	| multiplicative_expression (DIV_OP unary_expression)*
+
+unary_expression
+	| prefix_unary_expression
+	| postfix_unary_expression
+
+prefix_unary_expression
+	: (UNARY_OPERATOR return_expression)*
+
+UNARY_OPERATOR:
+	: '!'
+	| '-'
+
+postfix_unary_expression
+	: return_expression
+	| return_expression ('(' argument_expression_list? ')')+;
+
+argument_expression_list
+	: expression (',' expression)*
+
+return_expression
+	: primary_expression
+	| 'return' expression
+
+statement
+	: ';'
+	| variable_declaration
+	| function_declaration
+	| expression_statement
+
+declaration
+	: type IDENTIFIER variabile_declaration
+	| type IDENTIFIER function_declaration
+
+variable_declaration
+	: '=' primary_expression ';'
+
+function_declaration
+	: '(' parameters? ')' block_expression
+
+parameters
+	: type IDENTIFIER (',' type_specifier IDENTIFIER)*
+
+type
+	: TYPE_SPECIFIER pointer*
+
+TYPE_SPECIFIER
+	| 'int'
+	| 'bool'
+	| 'str'
+	| 'none'
+
+expression_statement
+	| expression ';'
+

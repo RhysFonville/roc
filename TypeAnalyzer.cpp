@@ -143,6 +143,8 @@ void TypeAnalyzer::infer_expression(const std::shared_ptr<Expression>& expr) {
 		infer_call_expression(call);
 	} else if (auto ret{std::dynamic_pointer_cast<ReturnExpression>(expr)}) {
 		infer_return_expression(ret);
+	} else if (auto cast{std::dynamic_pointer_cast<CastExpression>(expr)}) {
+		infer_cast_expression(cast);
 	} else {
 		expr->type = nullptr;
 	}
@@ -297,6 +299,11 @@ void TypeAnalyzer::infer_return_expression(const std::shared_ptr<ReturnExpressio
 	expr->type = expr->return_expression->type;
 }
 
+void TypeAnalyzer::infer_cast_expression(const std::shared_ptr<CastExpression>& expr) {
+	infer_expression(expr->expr);
+	expr->type = expr->cast_type;
+}
+
 void TypeAnalyzer::infer_statement(const std::shared_ptr<Statement>& stmt) {
 	if (auto expr{std::dynamic_pointer_cast<ExpressionStatement>(stmt)}) {
 		infer_expression_statement(expr);
@@ -367,6 +374,8 @@ void TypeAnalyzer::substitute_expression(const std::shared_ptr<Expression>& expr
 		substitute_call_expression(call);
 	} else if (auto ret{std::dynamic_pointer_cast<ReturnExpression>(expr)}) {
 		substitute_return_expression(ret);
+	} else if (auto cast{std::dynamic_pointer_cast<CastExpression>(expr)}) {
+		substitute_cast_expression(cast);
 	}
 }
 
@@ -458,6 +467,11 @@ void TypeAnalyzer::substitute_return_expression(const std::shared_ptr<ReturnExpr
 	if (!is_inferred(expr->type)) {
 		type_error(expr->return_tok, "Unable to infer return expression type.");
 	}
+}
+
+void TypeAnalyzer::substitute_cast_expression(const std::shared_ptr<CastExpression>& expr) {
+	substitute_expression(expr->expr);
+	expr->type = substitute(expr->cast_type);
 }
 
 void TypeAnalyzer::substitute_statement(const std::shared_ptr<Statement>& stmt) {

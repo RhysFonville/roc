@@ -55,9 +55,13 @@ additive_expression
 	| additive_expression ('-' multiplicative_expression)*
 
 multiplicative_expression
+	: cast_expression
+	| multiplicative_expression (MULT_OP cast_expression)*
+	| multiplicative_expression (DIV_OP cast_expression)*
+
+cast_expression
 	: unary_expression
-	| multiplicative_expression (MULT_OP unary_expression)*
-	| multiplicative_expression (DIV_OP unary_expression)*
+	| unary_expression 'as' type_specifier
 
 unary_expression
 	| prefix_unary_expression

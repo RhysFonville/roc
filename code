@@ -1,12 +1,9 @@
-auto add(auto a, auto b) {
-	auto c = '0';
-	c = c + a + b;
-	write(1, &c, 1);
-	return c;
-}
-
 i32 main() {
-	add(5, 3);
+	i32 zero = '0' as i32;
+	i32 x = 5;
+	i32 y = 3;
+	i32 z = zero + x + y;
+	write(1, (&z) as i8*, 1);
 	return 0;
 }
 

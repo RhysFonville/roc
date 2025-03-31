@@ -82,6 +82,15 @@ struct BlockExpression : public Expression {
 	Token opening_block{};
 };
 
+struct CastExpression : public Expression {
+	explicit CastExpression(const std::shared_ptr<Expression>& expr, const Token& as, const Type& cast_type)
+		: expr{expr}, as{as}, cast_type{cast_type} { }
+	
+	std::shared_ptr<Expression> expr{};
+	Token as{};
+	Type cast_type{};
+};
+
 struct ExpressionStatement : public Statement {
 	explicit ExpressionStatement(const std::shared_ptr<Expression>& expr)
 		: expr{expr} { }

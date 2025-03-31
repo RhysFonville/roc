@@ -182,14 +182,22 @@ std::shared_ptr<Expression> Parser::additive_expression() {
 }
 
 std::shared_ptr<Expression> Parser::multiplicative_expression() {
-	auto lhs{unary_expression()};
+	auto lhs{cast_expression()};
 	while (match({TokenType::STAR, TokenType::SLASH})) {
 		Token op{previous()};
-		auto rhs{unary_expression()};
+		auto rhs{cast_expression()};
 		lhs = std::make_shared<BinaryExpression>(lhs, op, rhs);
 	}
 
 	return lhs;
+}
+
+std::shared_ptr<Expression> Parser::cast_expression() {
+	auto expr{unary_expression()};
+	if (match({TokenType::AS})) {
+		expr = std::make_shared<CastExpression>(expr, previous(), type());
+	}
+	return expr;
 }
 
 std::shared_ptr<Expression> Parser::unary_expression() {

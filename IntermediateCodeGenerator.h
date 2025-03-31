@@ -203,6 +203,7 @@ private:
 	ASMVal block_expression(const std::shared_ptr<BlockExpression>& expr, const std::shared_ptr<FunctionDeclarationStatement>& func = nullptr);
 	ASMVal call_expression(const std::shared_ptr<CallExpression>& expr);
 	ASMVal return_expression(const std::shared_ptr<ReturnExpression>& expr, const std::shared_ptr<FunctionDeclarationStatement>& func = nullptr);
+	ASMVal cast_expression(const std::shared_ptr<CastExpression>& expr);
 
 	void generate_statement(const std::shared_ptr<Statement>& stmt);
 	void expression_statement(const std::shared_ptr<ExpressionStatement>& stmt);

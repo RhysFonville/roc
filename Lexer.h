@@ -25,10 +25,12 @@ enum class TokenType {
 	IDENTIFIER, STRING_LITERAL, NUMBER_LITERAL, CHAR_LITERAL,
 	TRUE, FALSE,
 
-	// Non-literal keywords.
+	// Type keywords.
 	U8, U16, U32, U64, I8, I16,
 	I32, I64, BOOL, NONE, AUTO,
-	ELSE, FOR, IF,
+
+	// Keywords.
+	ELSE, FOR, IF, AS,
 	RETURN, WHILE,
 
 	// Misc.
@@ -53,7 +55,8 @@ static const std::map<std::string, TokenType> keywords{
 	{"for",    TokenType::FOR},
 	{"while",  TokenType::WHILE},
 	{"true",   TokenType::TRUE},
-	{"false",  TokenType::FALSE}
+	{"false",  TokenType::FALSE},
+	{"as",  TokenType::AS}
 };
 
 static const std::vector<TokenType> literal_tokens{

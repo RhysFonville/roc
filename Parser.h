@@ -50,6 +50,7 @@ private:
 	std::shared_ptr<Expression> relational_expression();
 	std::shared_ptr<Expression> additive_expression();
 	std::shared_ptr<Expression> multiplicative_expression();
+	std::shared_ptr<Expression> cast_expression();
 	std::shared_ptr<Expression> unary_expression();
 	std::shared_ptr<Expression> prefix_unary_expression();
 	std::shared_ptr<Expression> postfix_unary_expression();

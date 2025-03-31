@@ -156,6 +156,8 @@ ASMVal IntermediateCodeGenerator::generate_expression(const std::shared_ptr<Expr
 		return call_expression(call);
 	} else if (auto ret{std::dynamic_pointer_cast<ReturnExpression>(expr)}) {
 		return return_expression(ret);
+	} else if (auto cast{std::dynamic_pointer_cast<CastExpression>(expr)}) {
+		return cast_expression(cast);
 	}
 
 	return nullptr;
@@ -347,7 +349,7 @@ ASMVal IntermediateCodeGenerator::block_expression(const std::shared_ptr<BlockEx
 		} else if (!stacks.top().vars.empty()) {
 			sub = std::max(16, sub);
 		}
-if (sub != 0) {
+		if (sub != 0) {
 			insert_command(IRCommand{IRCommandType::SUB, std::make_pair(
 				std::make_shared<ASMValNonRegister>(
 					create_sz(TypeEnum::U64), std::to_string(sub)
@@ -464,6 +466,12 @@ ASMVal IntermediateCodeGenerator::return_expression(const std::shared_ptr<Return
 		return std::make_shared<ASMValRegister>(expr->type, occupy_reg(RegisterName::Ret));
 	else
 		return nullptr;
+}
+
+ASMVal IntermediateCodeGenerator::cast_expression(const std::shared_ptr<CastExpression>& expr) {
+	auto ret{generate_expression(expr->expr)};
+	ret->held_type = expr->type;
+	return ret;
 }
 
 void IntermediateCodeGenerator::generate_statement(const std::shared_ptr<Statement>& stmt) {

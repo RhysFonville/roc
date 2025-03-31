@@ -57,6 +57,7 @@ private:
 	void infer_block_expression(const std::shared_ptr<BlockExpression>& expr, const std::shared_ptr<FunctionDeclarationStatement>& func = nullptr);
 	void infer_call_expression(const std::shared_ptr<CallExpression>& expr);
 	void infer_return_expression(const std::shared_ptr<ReturnExpression>& expr);
+	void infer_cast_expression(const std::shared_ptr<CastExpression>& expr);
 	
 	void infer_statement(const std::shared_ptr<Statement>& stmt);
 	void infer_expression_statement(const std::shared_ptr<ExpressionStatement>& stmt);
@@ -72,6 +73,7 @@ private:
 	void substitute_block_expression(const std::shared_ptr<BlockExpression>& expr);
 	void substitute_call_expression(const std::shared_ptr<CallExpression>& expr);
 	void substitute_return_expression(const std::shared_ptr<ReturnExpression>& expr);
+	void substitute_cast_expression(const std::shared_ptr<CastExpression>& expr);
 	
 	void substitute_statement(const std::shared_ptr<Statement>& stmt);
 	void substitute_expression_statement(const std::shared_ptr<ExpressionStatement>& stmt);

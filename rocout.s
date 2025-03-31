@@ -3,32 +3,22 @@
 main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movb $5, %dil
-	movb $3, %sil
-	call _Z3add
-	movl $0, %eax
-	popq %rbp
-	ret
-	.global _Z3add
-_Z3add:
-	pushq %rbp
-	movq %rsp, %rbp
 	subq $16, %rsp
-	movb %dil, -1(%rbp)
-	movb %sil, -2(%rbp)
-	movb $48, -3(%rbp)
-	movb -3(%rbp), %al
-	movb -1(%rbp), %dil
-	addb %dil, %al
-	movb %al, %al
-	movb -2(%rbp), %dil
-	addb %dil, %al
-	movb %al, -3(%rbp)
+	movl $48, -4(%rbp)
+	movl $5, -8(%rbp)
+	movl $3, -12(%rbp)
+	movl -4(%rbp), %eax
+	movl -8(%rbp), %edi
+	addl %edi, %eax
+	movl %eax, %eax
+	movl -12(%rbp), %edi
+	addl %edi, %eax
+	movl %eax, -16(%rbp)
 	movl $1, %edi
-	leaq -3(%rbp), %rax
+	leaq -16(%rbp), %rax
 	movq %rax, %rsi
 	movl $1, %edx
 	call write
-	movzbl -3(%rbp), %eax
+	movl $0, %eax
 	leave
 	ret

@@ -4,20 +4,19 @@ main:
 	pushq %rbp
 	movq %rsp, %rbp
 	subq $16, %rsp
-	movl $48, -4(%rbp)
-	movl $5, -8(%rbp)
-	movl $3, -12(%rbp)
+	movl $-5, -4(%rbp)
+	movl $63, -4(%rbp)
 	movl -4(%rbp), %eax
-	movl -8(%rbp), %edi
-	addl %edi, %eax
-	movl %eax, %eax
-	movl -12(%rbp), %edi
-	addl %edi, %eax
-	movl %eax, -16(%rbp)
-	movl $1, %edi
-	leaq -16(%rbp), %rax
+	subl $63, %eax
+	addl $1, %eax
+	movl %eax, %edi
+	leaq -4(%rbp), %rax
 	movq %rax, %rsi
-	movl $1, %edx
+	movl -4(%rbp), %edx
+	addl $7, %edx
+	subl $72, %edx
+	addl $3, %edx
+	movl %edx, %edx
 	call write
 	movl $0, %eax
 	leave

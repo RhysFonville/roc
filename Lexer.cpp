@@ -21,11 +21,12 @@ void Lexer::scan_token() {
 		case ',': add_token(TokenType::COMMA); break;
 		case '.': add_token(TokenType::DOT); break;
 		case '-':
-			if (std::isdigit(c)) {
+			if (std::isdigit(peek())) {
 				number(true);
 			} else {
-				add_token(TokenType::MINUS); break;
+				add_token(TokenType::MINUS);
 			}
+			break;
 		case '+': add_token(TokenType::PLUS); break;
 		case ';': add_token(TokenType::SEMICOLON); break;
 		case '*': add_token(TokenType::STAR); break; 
@@ -136,8 +137,6 @@ void Lexer::number(bool negative) {
 
 	tokens.pop_back();
 	add_token(TokenType::NUMBER_LITERAL);
-
-	if (negative) tokens.back().value.insert(0, "-");
 }
 
 void Lexer::identifier() {

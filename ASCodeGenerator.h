@@ -59,9 +59,13 @@ private:
 	std::vector<IRCommand> commands{};
 	std::vector<std::string> asm_out{};
 
+	static const std::optional<ASMVal>& get_first(const IRCommand& cmd) noexcept { return std::get<0>(cmd.args); }
+	static const std::optional<ASMVal>& get_second(const IRCommand& cmd) noexcept { return std::get<1>(cmd.args); }
+	static const std::optional<ASMVal>& get_third(const IRCommand& cmd) noexcept { return std::get<2>(cmd.args); }
+
 	char get_cmd_postfix(uint8_t size);
 
-	std::string asm_cmd(const IRCommand& command, uint8_t cmd_size = 0u);
+	std::string asm_cmd(const IRCommand& command, const std::optional<ASMVal>& arg1, const std::optional<ASMVal>& arg2 = std::nullopt, uint8_t cmd_size = 0u);
 	std::string asm_val_str(const ASMVal& val);
 
 	std::string basic_translation(const IRCommand& command, uint8_t cmd_size = 0u);
@@ -83,5 +87,5 @@ private:
 	void lea(const IRCommand& command);
 	void label(const IRCommand& command);
 	void directive(const IRCommand& command);
-	void leave();
+	void leave(const IRCommand& command);
 };

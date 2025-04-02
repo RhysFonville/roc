@@ -2,57 +2,48 @@ RET main
 
 LABEL % (sz)BASE
 
-MOVE % (sz)STACK
+MOVE % (sz)BASE
 , % (sz)STACK
 
-SUB 16
-, 16
-
-MOVE 48
-, 48
-
-MOVE 5
-, 5
-
-MOVE 3
-, 3
+SUB % (sz)STACK
+, % (sz)STACK
 
 MOVE % (sz)BASE--4
+, -5
+
+MOVE % (sz)BASE--4
+, 63
+
+SUB % (sz)RET
 , % (sz)BASE--4
 
-MOVE % (sz)BASE--8
-, % (sz)BASE--8
-
-ADD % (sz)ARG5
-, % (sz)ARG5
-
-MOVE % (sz)RET
+ADD % (sz)RET
 , % (sz)RET
 
-MOVE % (sz)BASE--12
-, % (sz)BASE--12
-
-ADD % (sz)ARG5
-, % (sz)ARG5
-
-MOVE % (sz)RET
+MOVE % (sz)ARG5
 , % (sz)RET
 
-MOVE 1
-, 1
+POP % (sz)RET
+, % (sz)BASE--4
 
-POP % (sz)BASE--16
-, % (sz)BASE--16
-
-MOVE % (sz)RET
+MOVE % (sz)ARG4
 , % (sz)RET
 
-MOVE 1
-, 1
+ADD % (sz)ARG3
+, % (sz)BASE--4
+
+SUB % (sz)ARG3
+, % (sz)ARG3
+
+ADD % (sz)ARG3
+, % (sz)ARG3
+
+MOVE % (sz)ARG3
+, % (sz)ARG3
 
 NEG write
 
-MOVE 0
+MOVE % (sz)RET
 , 0
 
 ARG1 

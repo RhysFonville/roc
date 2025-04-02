@@ -55,6 +55,7 @@ struct Register {
 	Register(RegisterName name, bool important)
 		: name{name}, in_use{important}, important{important} { }
 	Register(RegisterName name) : Register{name, false} { }
+
 	bool operator==(const Register& reg) const noexcept { return reg.name == name; }
 
 	RegisterName name{};
@@ -97,6 +98,12 @@ struct ASMValRegister : public ASMValHolder {
 	std::optional<int> offset{std::nullopt};
 	bool dereferenced{};
 
+	bool operator==(const ASMValRegister& reg) const noexcept {
+		return (comp_types(held_type, reg.held_type) && *this->reg == *reg.reg &&
+				reg_size == reg.reg_size && offset == offset &&
+				dereferenced == reg.dereferenced);
+	}
+
 	void print(std::ostream& os) const noexcept override {
 		static std::vector<std::string> reg_strs{
 			"RET", "ARG1", "ARG2", "ARG3", "ARG4", "ARG5", "ARG6",
@@ -120,7 +127,29 @@ struct ASMValNonRegister : public ASMValHolder {
 	void print(std::ostream& os) const noexcept override {
 		os << value << std::endl;
 	}
+
+	bool operator==(const ASMValNonRegister& non) const noexcept {
+		return (comp_types(held_type, non.held_type) && value == non.value);
+	}
 };
+
+using ASMVal = std::shared_ptr<ASMValHolder>;
+
+static bool comp_asm_val(const ASMVal& lhs, const ASMVal& rhs) noexcept {
+	if (auto lhs_reg{std::dynamic_pointer_cast<ASMValRegister>(lhs)}) {
+		if (auto rhs_reg{std::dynamic_pointer_cast<ASMValRegister>(rhs)}) {
+			return *lhs_reg == *rhs_reg;
+		} else {
+			return false;
+		}
+	} else {
+		if (auto rhs_non{std::dynamic_pointer_cast<ASMValNonRegister>(rhs)}) {
+			return *std::dynamic_pointer_cast<ASMValNonRegister>(lhs) == *rhs_non;
+		} else {
+			return false;
+		}
+	}
+}
 
 static std::vector<Register> registers{ // Can't be const
 	{RegisterName::Ret},
@@ -130,11 +159,9 @@ static std::vector<Register> registers{ // Can't be const
 	{RegisterName::Stack, true}, {RegisterName::Base, true}, {RegisterName::Instruction, true},
 };
 
-using ASMVal = std::shared_ptr<ASMValHolder>;
-
 struct IRCommand {
 	IRCommandType type{};
-	std::pair<std::optional<ASMVal>, std::optional<ASMVal>> args{};
+	std::tuple<std::optional<ASMVal>, std::optional<ASMVal>, std::optional<ASMVal>> args{};
 
 	inline friend std::ostream& operator<<(std::ostream& os, const IRCommand& cmd) noexcept;
 };
@@ -152,8 +179,8 @@ inline std::ostream& operator<<(std::ostream& os, const IRCommand& cmd) noexcept
 
 	os << cmd_strs[(int)cmd.type] << " ";
 
-	if (cmd.args.first.has_value()) cmd.args.first.value()->print(os);
-	if (cmd.args.second.has_value()) { os << ", "; cmd.args.first.value()->print(os); }
+	if (std::get<0>(cmd.args).has_value()) std::get<0>(cmd.args).value()->print(os);
+	if (std::get<1>(cmd.args).has_value()) { os << ", "; std::get<1>(cmd.args).value()->print(os); }
 	
 	return os;
 }

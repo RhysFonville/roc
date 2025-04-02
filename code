@@ -1,9 +1,7 @@
 i32 main() {
-	i32 zero = '0' as i32;
-	i32 x = 5;
-	i32 y = 3;
-	i32 z = zero + x + y;
-	write(1, (&z) as i8*, 1);
+	i32 x = -5;
+	x = 60 + 3;
+	write(x - 63 + 1, &x as i8*, x + 7 - 72 + 3);
 	return 0;
 }
 

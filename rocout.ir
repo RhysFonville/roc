@@ -5,46 +5,7 @@ LABEL % (sz)BASE
 MOVE % (sz)BASE
 , % (sz)STACK
 
-SUB % (sz)STACK
-, % (sz)STACK
-
-MOVE % (sz)BASE--4
-, -5
-
-MOVE % (sz)BASE--4
-, 63
-
-SUB % (sz)RET
-, % (sz)BASE--4
-
-ADD % (sz)RET
-, % (sz)RET
-
-MOVE % (sz)ARG5
-, % (sz)RET
-
-POP % (sz)RET
-, % (sz)BASE--4
-
-MOVE % (sz)ARG4
-, % (sz)RET
-
-ADD % (sz)ARG3
-, % (sz)BASE--4
-
-SUB % (sz)ARG3
-, % (sz)ARG3
-
-ADD % (sz)ARG3
-, % (sz)ARG3
-
-MOVE % (sz)ARG3
-, % (sz)ARG3
-
-NEG write
-
 MOVE % (sz)RET
 , 0
 
-ARG1 
-CALL 
+PUSH % (sz)BASE

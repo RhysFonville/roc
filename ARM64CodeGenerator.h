@@ -2,19 +2,17 @@
 
 #include "MachineSpecificCodeGenerator.h"
 
-class ASCodeGenerator : public MachineSpecificCodeGenerator {
+class ARM64CodeGenerator : public MachineSpecificCodeGenerator {
 public:
-	ASCodeGenerator() : MachineSpecificCodeGenerator{} { }
-	ASCodeGenerator(const std::vector<IRCommand>& commands)
+	ARM64CodeGenerator() : MachineSpecificCodeGenerator{} { }
+	ARM64CodeGenerator(const std::vector<IRCommand>& commands)
 		: MachineSpecificCodeGenerator{commands} { }
 
 private:
-	char get_cmd_postfix(uint8_t size);
+	size_t stack_sub{0u};
 
-	std::string asm_cmd(const IRCommand& command, const std::optional<ASMVal>& arg1, const std::optional<ASMVal>& arg2 = std::nullopt, uint8_t cmd_size = 0u);
 	std::string asm_val_str(const ASMVal& val) const override;
-
-	std::string basic_translation(const IRCommand& command, uint8_t cmd_size = 0u);
+	std::string basic_translation(const IRCommand& command);
 
 	void preamble() override;
 	void move(const IRCommand& command) override;
@@ -34,7 +32,7 @@ private:
 	void directive(const IRCommand& command) override;
 	void leave(const IRCommand& command) override;
 
-	const std::map<IRCommandType, std::string> as_cmds{
+	const std::map<IRCommandType, std::string> arm_cmds{
 		{IRCommandType::MOVE, "mov"},
 		{IRCommandType::ADD, "add"},
 		{IRCommandType::SUB, "sub"},
@@ -50,23 +48,24 @@ private:
 		{IRCommandType::LEAVE, "leave"}
 	};
 
-	const std::vector<ASMRegister> as_registers{
-		{{"rax", "eax", "ax", "al", "ah"}},
-		{{"rbx", "ebx", "bx", "bl", "bh"}},
-		{{"rcx", "ecx", "cx", "cl", "ch"}},
-		{{"rdx", "edx", "dx", "dl", "dh"}},
-		{{"rsi", "esi", "si", "sil", ""}},
-		{{"rdi", "edi", "di", "dil", ""}},
-		{{"r8", "r8d", "r8w", "r8b", ""}},
-		{{"r9", "r9d", "r9w", "r9b", ""}},
-		{{"r10", "r10d", "r10w", "r10b", ""}},
-		{{"r11", "r11d", "r11w", "r11b", ""}},
-		{{"r12", "r12d", "r12w", "r12b", ""}},
-		{{"r13", "r13d", "r13w", "r13b", ""}},
-		{{"r14", "r14d", "r14w", "r14b", ""}},
-		{{"r15", "r15d", "r15w", "r15b", ""}},
-		{{"rsp", "esp", "sp", "spl", ""}},
-		{{"rbp", "ebp", "bp", "bpl", ""}},
-		{{"rip", "eip", "ip", "", ""}}
+	const std::vector<ASMRegister> arm_registers{
+		{std::array<std::string, 2>{"x0", "w0"}},
+		{std::array<std::string, 2>{"x19", "w19"}},
+		{std::array<std::string, 2>{"x4", "w4"}},
+		{std::array<std::string, 2>{"x3", "w3"}},
+		{std::array<std::string, 2>{"x2", "w2"}},
+		{std::array<std::string, 2>{"x1", "w1"}},
+		{std::array<std::string, 2>{"x5", "w5"}},
+		{std::array<std::string, 2>{"x6", "w6"}},
+		{std::array<std::string, 2>{"x9", "w9"}},
+		{std::array<std::string, 2>{"x10", "w10"}},
+		{std::array<std::string, 2>{"x20", "w20"}},
+		{std::array<std::string, 2>{"x21", "w21"}},
+		{std::array<std::string, 2>{"x22", "w22"}},
+		{std::array<std::string, 2>{"x23", "w23"}},
+		{std::array<std::string, 2>{"sp", "sp"}},
+		{std::array<std::string, 2>{"x29", "w29"}},
+		{std::array<std::string, 2>{"pc", "pc"}}
 	};
 };
+

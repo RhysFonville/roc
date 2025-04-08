@@ -9,7 +9,7 @@ char ASCodeGenerator::get_cmd_postfix(uint8_t size) {
 			return 'q';
 		case SZ_E:
 			return 'l';
-		case SZ_X:
+		case SZ_W:
 			return 'w';
 		case SZ_H:
 			return 'b';
@@ -21,7 +21,7 @@ char ASCodeGenerator::get_cmd_postfix(uint8_t size) {
 }
 
 std::string ASCodeGenerator::asm_cmd(const IRCommand& command, const std::optional<ASMVal>& arg1, const std::optional<ASMVal>& arg2, uint8_t cmd_size) {
-	std::string ret{as_cmds[command.type]};
+	std::string ret{as_cmds.at(command.type)};
 	if (arg1.has_value()) {
 		auto get_sz = [](auto val) {
 			if (auto lhs{std::dynamic_pointer_cast<ASMValRegister>(val)}) {
@@ -43,13 +43,13 @@ std::string ASCodeGenerator::asm_cmd(const IRCommand& command, const std::option
 	return ret;
 }
 
-std::string ASCodeGenerator::asm_val_str(const ASMVal& val) {
+std::string ASCodeGenerator::asm_val_str(const ASMVal& val) const {
 	if (auto reg{std::dynamic_pointer_cast<ASMValRegister>(val)}) {
 		std::string ret{};
 		if (reg->offset.has_value()) ret += std::to_string(reg->offset.value()) + "(";
 		else if (reg->dereferenced) ret += "(";
 
-		ret += "%" + as_registers[(size_t)reg->reg->name].sizes[reg->reg_size]; 
+		ret += "%" + as_registers[(size_t)reg->reg->name].sizes.at(reg->reg_size);
 
 		if (reg->offset.has_value()) ret += ")";
 		else if (reg->dereferenced) ret += ")";
@@ -87,78 +87,8 @@ std::string ASCodeGenerator::basic_translation(const IRCommand& command, uint8_t
 	return ret;
 }
 
-const std::vector<std::string>& ASCodeGenerator::run() {
-	for (const IRCommand& command : commands) {
-		generate_command(command);
-	}
-	preamble();
-
-	for (int i{0}; i < asm_out.size(); i++) {
-		if (asm_out[i].back() != ':') {
-			asm_out[i] = std::string{"\t"} + asm_out[i];
-		}
-	}
-	return asm_out;
-}
-
 void ASCodeGenerator::preamble() {
 	asm_out.insert(asm_out.begin(), ".text");
-}
-
-void ASCodeGenerator::generate_command(const IRCommand& command) {
-	switch (command.type) {
-		case IRCommandType::MOVE:
-			move(command);
-			return;
-		case IRCommandType::ADD:
-			add(command);
-			return;
-		case IRCommandType::SUB:
-			sub(command);
-			return;
-		case IRCommandType::MULT:
-			mul(command);
-			return;
-		case IRCommandType::DIV:
-			div(command);
-			return;
-		case IRCommandType::XOR:
-			xor_cmd(command);
-			return;
-		case IRCommandType::NEG:
-			neg(command);
-			return;
-		case IRCommandType::CALL:
-			call(command);
-			return;
-		case IRCommandType::RET:
-			ret(command);
-			return;
-		case IRCommandType::FUNC:
-			func(command);
-			return;
-		case IRCommandType::PUSH:
-			push(command);
-			return;
-		case IRCommandType::POP:
-			pop(command);
-			return;
-		case IRCommandType::LEA:
-			lea(command);
-			return;
-		case IRCommandType::LABEL:
-			label(command);
-			return;
-		case IRCommandType::DIRECTIVE:
-			directive(command);
-			return;
-		case IRCommandType::LEAVE:
-			leave(command);
-			return;
-		default:
-			asm_out.push_back("Not supported just yet ;)");
-			return;
-	}
 }
 
 void ASCodeGenerator::move(const IRCommand& command) {
@@ -173,6 +103,7 @@ void ASCodeGenerator::move(const IRCommand& command) {
 			IRCommand move_into{IRCommandType::MOVE, std::make_tuple(reg_lhs, reg, std::nullopt)};
 			move(temp_move);
 			move(move_into);
+			reg->reg->in_use = false;
 			return;
 		}
 	}
@@ -194,12 +125,12 @@ void ASCodeGenerator::move(const IRCommand& command) {
 		postfix += get_cmd_postfix(rhs_size);
 		postfix += get_cmd_postfix(lhs_size);
 
-		asm_out.push_back(as_cmds[command.type] + postfix + " " +
+		asm_out.push_back(as_cmds.at(command.type) + postfix + " " +
 			asm_val_str(get_second(command).value()) + ", " +
 			asm_val_str(get_first(command).value())
 		);
 	} else {
-		asm_out.push_back(as_cmds[command.type] + get_cmd_postfix(lhs_size) + " " +
+		asm_out.push_back(as_cmds.at(command.type) + get_cmd_postfix(lhs_size) + " " +
 			asm_val_str(get_second(command).value()) + ", " +
 			asm_val_str(get_first(command).value())
 		);
@@ -231,11 +162,11 @@ void ASCodeGenerator::neg(const IRCommand& command) {
 }
 
 void ASCodeGenerator::call(const IRCommand& command) {
-	asm_out.push_back(as_cmds[command.type] + " " + std::dynamic_pointer_cast<ASMValNonRegister>(get_first(command).value())->value);
+	asm_out.push_back(as_cmds.at(command.type) + " " + std::dynamic_pointer_cast<ASMValNonRegister>(get_first(command).value())->value);
 }
 
 void ASCodeGenerator::ret(const IRCommand& command) {
-	asm_out.push_back(as_cmds[command.type]);
+	asm_out.push_back(as_cmds.at(command.type));
 }
 
 void ASCodeGenerator::func(const IRCommand& command) {
@@ -269,6 +200,6 @@ void ASCodeGenerator::directive(const IRCommand& command) {
 }
 
 void ASCodeGenerator::leave(const IRCommand& command) {
-	asm_out.push_back(as_cmds[command.type]);
+	asm_out.push_back(as_cmds.at(command.type));
 }
 

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <memory>
+#include <optional>
 #include "IntermediateCodeGenerator.h"
 #include "Lexer.h"
 #include "Syntax.h"
@@ -165,7 +166,11 @@ ASMVal IntermediateCodeGenerator::generate_expression(const std::shared_ptr<Expr
 
 ASMVal IntermediateCodeGenerator::identifier_expression(const std::shared_ptr<IdentifierExpression>& expr) {
 	if (auto it{std::ranges::find_if(stacks.top().vars, [&](auto v){return v.name==expr->identifier.value;})}; it != stacks.top().vars.end()) {
-		return std::make_shared<ASMValRegister>(it->type, it->pos);
+		auto reg{std::make_shared<ASMValRegister>(it->type, it->pos)};
+		insert_command(IRCommand{IRCommandType::LOAD, std::make_tuple(
+			reg, std::nullopt, std::nullopt
+		)});
+		return reg;
 	} else {
 		return std::make_shared<ASMValNonRegister>(it->type, expr->identifier.value);
 	}
@@ -515,7 +520,7 @@ void IntermediateCodeGenerator::variable_declaration_statement(const std::shared
 		}
 	);*/
 	auto offset{create_var(stmt->identifier->identifier.value, stmt->type)};
-	insert_command(IRCommand{IRCommandType::MOVE, std::make_tuple(
+	insert_command(IRCommand{IRCommandType::LOAD, std::make_tuple(
 		std::make_shared<ASMValRegister>(stmt->type, offset),
 		generate_expression(stmt->initializer),
 		std::nullopt

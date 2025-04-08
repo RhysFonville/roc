@@ -1,10 +1,10 @@
 #include <sstream>
 #include <ostream>
 #include "ROC.h"
+#include "ARM64CodeGenerator.h"
 #include "Parser.h"
 #include "TypeAnalyzer.h"
 #include "EnvironmentAnalyzer.h"
-#include "IntermediateCodeGenerator.h"
 #include "ASCodeGenerator.h"
 
 void ROC::run(const std::string& line) {
@@ -81,15 +81,29 @@ void ROC::run(const std::ifstream& file) {
 		ir_out << cmd << '\n';
 	}
 
-	ASCodeGenerator as{cmds};
-	auto as_cmds{as.run()};
+	auto as{get_appropriate_code_generator(cmds)};
+	auto as_cmds{as->run()};
 
-	std::cout << "GAS code generation completed.\n";
+	std::cout << "Machine specific code generation completed.\n";
 
 	std::ofstream out{"rocout.s"};
 	for (auto cmd : as_cmds) {
 		out << cmd << '\n';
 	}
 	out.close();
+}
+
+std::shared_ptr<MachineSpecificCodeGenerator> ROC::get_appropriate_code_generator(const std::vector<IRCommand>& commands) {
+#ifdef _WIN32
+#elif _WIN64
+#elif __APPLE__ || __MACH__
+	return std::make_shared<ARM64CodeGenerator>(commands);
+#elif __linux__
+	return std::make_shared<ASCodeGenerator>(commands);
+#elif __FreeBSD__
+#elif __unix || __unix__
+	return std::make_shared<ASCodeGenerator>(commands);
+#else
+#endif
 }
 

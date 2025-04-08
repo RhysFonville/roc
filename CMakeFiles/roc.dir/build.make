@@ -100,10 +100,24 @@ CMakeFiles/roc.dir/ROC.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/roc.dir/ROC.cpp.s"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/rhys/progs/roc/ROC.cpp -o CMakeFiles/roc.dir/ROC.cpp.s
 
+CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o: CMakeFiles/roc.dir/flags.make
+CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o: ARM64CodeGenerator.cpp
+CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o: CMakeFiles/roc.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o -MF CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o.d -o CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o -c /Users/rhys/progs/roc/ARM64CodeGenerator.cpp
+
+CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/rhys/progs/roc/ARM64CodeGenerator.cpp > CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.i
+
+CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/rhys/progs/roc/ARM64CodeGenerator.cpp -o CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.s
+
 CMakeFiles/roc.dir/ASCodeGenerator.cpp.o: CMakeFiles/roc.dir/flags.make
 CMakeFiles/roc.dir/ASCodeGenerator.cpp.o: ASCodeGenerator.cpp
 CMakeFiles/roc.dir/ASCodeGenerator.cpp.o: CMakeFiles/roc.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/roc.dir/ASCodeGenerator.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/roc.dir/ASCodeGenerator.cpp.o"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/roc.dir/ASCodeGenerator.cpp.o -MF CMakeFiles/roc.dir/ASCodeGenerator.cpp.o.d -o CMakeFiles/roc.dir/ASCodeGenerator.cpp.o -c /Users/rhys/progs/roc/ASCodeGenerator.cpp
 
 CMakeFiles/roc.dir/ASCodeGenerator.cpp.i: cmake_force
@@ -114,10 +128,24 @@ CMakeFiles/roc.dir/ASCodeGenerator.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/roc.dir/ASCodeGenerator.cpp.s"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/rhys/progs/roc/ASCodeGenerator.cpp -o CMakeFiles/roc.dir/ASCodeGenerator.cpp.s
 
+CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o: CMakeFiles/roc.dir/flags.make
+CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o: MachineSpecificCodeGenerator.cpp
+CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o: CMakeFiles/roc.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o -MF CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o.d -o CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o -c /Users/rhys/progs/roc/MachineSpecificCodeGenerator.cpp
+
+CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/rhys/progs/roc/MachineSpecificCodeGenerator.cpp > CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.i
+
+CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/rhys/progs/roc/MachineSpecificCodeGenerator.cpp -o CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.s
+
 CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o: CMakeFiles/roc.dir/flags.make
 CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o: IntermediateCodeGenerator.cpp
 CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o: CMakeFiles/roc.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o -MF CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o.d -o CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o -c /Users/rhys/progs/roc/IntermediateCodeGenerator.cpp
 
 CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.i: cmake_force
@@ -131,7 +159,7 @@ CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.s: cmake_force
 CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o: CMakeFiles/roc.dir/flags.make
 CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o: EnvironmentAnalyzer.cpp
 CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o: CMakeFiles/roc.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o -MF CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o.d -o CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o -c /Users/rhys/progs/roc/EnvironmentAnalyzer.cpp
 
 CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.i: cmake_force
@@ -145,7 +173,7 @@ CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.s: cmake_force
 CMakeFiles/roc.dir/TypeAnalyzer.cpp.o: CMakeFiles/roc.dir/flags.make
 CMakeFiles/roc.dir/TypeAnalyzer.cpp.o: TypeAnalyzer.cpp
 CMakeFiles/roc.dir/TypeAnalyzer.cpp.o: CMakeFiles/roc.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/roc.dir/TypeAnalyzer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/roc.dir/TypeAnalyzer.cpp.o"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/roc.dir/TypeAnalyzer.cpp.o -MF CMakeFiles/roc.dir/TypeAnalyzer.cpp.o.d -o CMakeFiles/roc.dir/TypeAnalyzer.cpp.o -c /Users/rhys/progs/roc/TypeAnalyzer.cpp
 
 CMakeFiles/roc.dir/TypeAnalyzer.cpp.i: cmake_force
@@ -159,7 +187,7 @@ CMakeFiles/roc.dir/TypeAnalyzer.cpp.s: cmake_force
 CMakeFiles/roc.dir/Parser.cpp.o: CMakeFiles/roc.dir/flags.make
 CMakeFiles/roc.dir/Parser.cpp.o: Parser.cpp
 CMakeFiles/roc.dir/Parser.cpp.o: CMakeFiles/roc.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/roc.dir/Parser.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/roc.dir/Parser.cpp.o"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/roc.dir/Parser.cpp.o -MF CMakeFiles/roc.dir/Parser.cpp.o.d -o CMakeFiles/roc.dir/Parser.cpp.o -c /Users/rhys/progs/roc/Parser.cpp
 
 CMakeFiles/roc.dir/Parser.cpp.i: cmake_force
@@ -173,7 +201,7 @@ CMakeFiles/roc.dir/Parser.cpp.s: cmake_force
 CMakeFiles/roc.dir/Lexer.cpp.o: CMakeFiles/roc.dir/flags.make
 CMakeFiles/roc.dir/Lexer.cpp.o: Lexer.cpp
 CMakeFiles/roc.dir/Lexer.cpp.o: CMakeFiles/roc.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/roc.dir/Lexer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/roc.dir/Lexer.cpp.o"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/roc.dir/Lexer.cpp.o -MF CMakeFiles/roc.dir/Lexer.cpp.o.d -o CMakeFiles/roc.dir/Lexer.cpp.o -c /Users/rhys/progs/roc/Lexer.cpp
 
 CMakeFiles/roc.dir/Lexer.cpp.i: cmake_force
@@ -188,7 +216,9 @@ CMakeFiles/roc.dir/Lexer.cpp.s: cmake_force
 roc_OBJECTS = \
 "CMakeFiles/roc.dir/main.cpp.o" \
 "CMakeFiles/roc.dir/ROC.cpp.o" \
+"CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o" \
 "CMakeFiles/roc.dir/ASCodeGenerator.cpp.o" \
+"CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o" \
 "CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o" \
 "CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o" \
 "CMakeFiles/roc.dir/TypeAnalyzer.cpp.o" \
@@ -200,7 +230,9 @@ roc_EXTERNAL_OBJECTS =
 
 roc: CMakeFiles/roc.dir/main.cpp.o
 roc: CMakeFiles/roc.dir/ROC.cpp.o
+roc: CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o
 roc: CMakeFiles/roc.dir/ASCodeGenerator.cpp.o
+roc: CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o
 roc: CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o
 roc: CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o
 roc: CMakeFiles/roc.dir/TypeAnalyzer.cpp.o
@@ -208,7 +240,7 @@ roc: CMakeFiles/roc.dir/Parser.cpp.o
 roc: CMakeFiles/roc.dir/Lexer.cpp.o
 roc: CMakeFiles/roc.dir/build.make
 roc: CMakeFiles/roc.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable roc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable roc"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/roc.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

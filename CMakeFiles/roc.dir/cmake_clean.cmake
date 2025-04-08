@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o"
+  "CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o.d"
   "CMakeFiles/roc.dir/ASCodeGenerator.cpp.o"
   "CMakeFiles/roc.dir/ASCodeGenerator.cpp.o.d"
   "CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o"
@@ -7,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o.d"
   "CMakeFiles/roc.dir/Lexer.cpp.o"
   "CMakeFiles/roc.dir/Lexer.cpp.o.d"
+  "CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o"
+  "CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o.d"
   "CMakeFiles/roc.dir/Parser.cpp.o"
   "CMakeFiles/roc.dir/Parser.cpp.o.d"
   "CMakeFiles/roc.dir/ROC.cpp.o"

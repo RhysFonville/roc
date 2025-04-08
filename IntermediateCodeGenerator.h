@@ -11,7 +11,7 @@
 
 constexpr uint8_t SZ_R{8u};
 constexpr uint8_t SZ_E{4u};
-constexpr uint8_t SZ_X{2u};
+constexpr uint8_t SZ_W{2u};
 constexpr uint8_t SZ_H{1u};
 constexpr uint8_t SZ_L{1u};
 
@@ -31,7 +31,9 @@ enum class IRCommandType {
 	POP,
 	LEA,
 	DIRECTIVE,
-	LEAVE
+	LEAVE,
+	STORE,
+	LOAD
 };
 
 namespace DIRECTIVES {

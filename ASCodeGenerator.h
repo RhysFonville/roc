@@ -32,7 +32,7 @@ private:
 	void lea(const IRCommand& command) override;
 	void label(const IRCommand& command) override;
 	void directive(const IRCommand& command) override;
-	void leave(const IRCommand& command) override;
+	void exit_stack(const IRCommand& command) override;
 
 	const std::map<IRCommandType, std::string> as_cmds{
 		{IRCommandType::MOVE, "mov"},
@@ -47,7 +47,7 @@ private:
 		{IRCommandType::PUSH, "push"},
 		{IRCommandType::POP, "pop"},
 		{IRCommandType::LEA, "lea"},
-		{IRCommandType::LEAVE, "leave"}
+		{IRCommandType::EXIT_STACK, "leave"}
 	};
 
 	const std::vector<ASMRegister> as_registers{
@@ -67,6 +67,7 @@ private:
 		{{"r15", "r15d", "r15w", "r15b", ""}},
 		{{"rsp", "esp", "sp", "spl", ""}},
 		{{"rbp", "ebp", "bp", "bpl", ""}},
-		{{"rip", "eip", "ip", "", ""}}
+		{{"rip", "eip", "ip", "", ""}},
+		{{"", "", "", "", ""}}
 	};
 };

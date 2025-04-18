@@ -199,7 +199,7 @@ void ASCodeGenerator::directive(const IRCommand& command) {
 	);
 }
 
-void ASCodeGenerator::leave(const IRCommand& command) {
+void ASCodeGenerator::exit_stack(const IRCommand& command) {
 	asm_out.push_back(as_cmds.at(command.type));
 }
 

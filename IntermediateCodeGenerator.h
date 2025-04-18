@@ -21,19 +21,23 @@ enum class IRCommandType {
 	SUB,
 	MULT,
 	DIV,
-	XOR,
 	NEG,
+	XOR,
 	CALL,
 	RET,
 	FUNC,
+	SET_ARG,
+	ENTER_STACK,
+	EXIT_STACK,
 	LABEL,
 	PUSH,
 	POP,
 	LEA,
 	DIRECTIVE,
-	LEAVE,
 	STORE,
-	LOAD
+	LOAD,
+	NOTHING,
+	ZERO
 };
 
 namespace DIRECTIVES {
@@ -44,7 +48,8 @@ enum class RegisterName {
 	Ret, CP1, Arg4, Arg3, Arg2,
 	Arg1, Arg5, Arg6, GP1, GP2,
 	CP2, CP3, CP4, CP5,
-	Stack, Base, Instruction
+	Stack, Base, Instruction,
+	RetAddress
 }; 
 
 static const std::vector<RegisterName> arg_regs{
@@ -113,9 +118,8 @@ struct ASMValRegister : public ASMValHolder {
 			"GP1", "GP2",
 			"STACK", "BASE", "INSTRUCTION"
 		};
-		os << "% (sz" << reg_size << ")" << reg_strs[(size_t)reg->name];
+		os << "% (sz" << std::to_string(reg_size) << ")" << reg_strs[(size_t)reg->name];
 		if (offset.has_value()) os << "-" << offset.value();
-		os << std::endl;
 	}
 };
 
@@ -127,7 +131,7 @@ struct ASMValNonRegister : public ASMValHolder {
 	std::string value{};
 
 	void print(std::ostream& os) const noexcept override {
-		os << value << std::endl;
+		os << value;
 	}
 
 	bool operator==(const ASMValNonRegister& non) const noexcept {
@@ -159,6 +163,7 @@ static std::vector<Register> registers{ // Can't be const
 	{RegisterName::CP1}, {RegisterName::CP2}, {RegisterName::CP3}, {RegisterName::CP4}, {RegisterName::CP5},
 	{RegisterName::GP1}, {RegisterName::GP2},
 	{RegisterName::Stack, true}, {RegisterName::Base, true}, {RegisterName::Instruction, true},
+	{RegisterName::RetAddress, true}
 };
 
 struct IRCommand {
@@ -170,19 +175,17 @@ struct IRCommand {
 
 inline std::ostream& operator<<(std::ostream& os, const IRCommand& cmd) noexcept {
 	static std::vector<std::string> cmd_strs{
-		"MOVE", "ADD", "SUB", "MULT", "DIV", "GOTO", "XOR", "NEG", "CALL", "RET", "FUNC", "LABEL", "PUSH", "POP"
-	};
-	static std::vector<std::string> reg_strs{
-		"RET", "ARG1", "ARG2", "ARG3", "ARG4", "ARG5", "ARG6",
-		"CP1", "CP2", "CP3", "CP4", "CP5",
-		"GP1", "GP2",
-		"Stack", "Base", "Instruction"
+		"MOVE", "ADD", "SUB", "MULT", "DIV", "NEG", "XOR", "CALL",
+		"RET", "FUNC", "SET_ARG", "ENTER_STACK", "EXIT_STACK",
+		"LABEL", "PUSH", "POP", "LEA", "DIRECTIVE", "STORE",
+		"LOAD", "NOTHING", "ZERO"
 	};
 
 	os << cmd_strs[(int)cmd.type] << " ";
 
 	if (std::get<0>(cmd.args).has_value()) std::get<0>(cmd.args).value()->print(os);
 	if (std::get<1>(cmd.args).has_value()) { os << ", "; std::get<1>(cmd.args).value()->print(os); }
+	if (std::get<2>(cmd.args).has_value()) { os << ", "; std::get<2>(cmd.args).value()->print(os); }
 	
 	return os;
 }

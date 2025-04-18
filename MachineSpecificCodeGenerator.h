@@ -44,16 +44,22 @@ protected:
 	virtual void sub(const IRCommand& command) { }
 	virtual void mul(const IRCommand& command) { }
 	virtual void div(const IRCommand& command) { }
-	virtual void xor_cmd(const IRCommand& command) { }
 	virtual void neg(const IRCommand& command) { }
+	virtual void xor_cmd(const IRCommand& command) { }
 	virtual void call(const IRCommand& command) { }
 	virtual void ret(const IRCommand& command) { }
 	virtual void func(const IRCommand& command) { }
+	virtual void set_arg(const IRCommand& command) { }
+	virtual void enter_stack(const IRCommand& command) { }
+	virtual void exit_stack(const IRCommand& command) { }
+	virtual void label(const IRCommand& command) { }
 	virtual void push(const IRCommand& command) { }
 	virtual void pop(const IRCommand& command) { }
 	virtual void lea(const IRCommand& command) { }
-	virtual void label(const IRCommand& command) { }
 	virtual void directive(const IRCommand& command) { }
-	virtual void leave(const IRCommand& command) { }
+	virtual void store(const IRCommand& command) { }
+	virtual void load(const IRCommand& command) { }
+	virtual void nothing(const IRCommand& command) { }
+	virtual void zero(const IRCommand& command) { }
 };
 

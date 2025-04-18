@@ -1,4 +1,5 @@
+i32 func() { i32 x = 7; return x; }
 i32 main() {
-	return 0;
+	return func();
 }
 

@@ -523,6 +523,7 @@ CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/c++/v1/ostream
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/c++/v1/ranges
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/c++/v1/ratio
+ /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/c++/v1/regex
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/c++/v1/set
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/c++/v1/span
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/c++/v1/stack
@@ -568,6 +569,7 @@ CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/pthread/sched.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/runetype.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/sched.h
+ /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stddef.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdint.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdio.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdlib.h
@@ -670,24 +672,25 @@ CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_time.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wchar.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wctype.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___gnuc_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_arg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_max_align_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_null.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_nullptr_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_offsetof.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_ptrdiff_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_size_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_wchar_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/limits.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___gnuc_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_arg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_max_align_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_null.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_nullptr_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_offsetof.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_ptrdiff_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_size_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_wchar_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/limits.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/ptrcheck.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h
  /Users/rhys/progs/roc/ARM64CodeGenerator.h
  /Users/rhys/progs/roc/Environment.h
  /Users/rhys/progs/roc/IntermediateCodeGenerator.h
@@ -1263,6 +1266,7 @@ CMakeFiles/roc.dir/ASCodeGenerator.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/pthread/sched.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/runetype.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/sched.h
+ /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stddef.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdint.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdio.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdlib.h
@@ -1365,24 +1369,25 @@ CMakeFiles/roc.dir/ASCodeGenerator.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_time.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wchar.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wctype.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___gnuc_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_arg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_max_align_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_null.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_nullptr_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_offsetof.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_ptrdiff_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_size_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_wchar_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/limits.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___gnuc_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_arg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_max_align_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_null.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_nullptr_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_offsetof.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_ptrdiff_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_size_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_wchar_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/limits.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/ptrcheck.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h
  /Users/rhys/progs/roc/ASCodeGenerator.h
  /Users/rhys/progs/roc/Environment.h
  /Users/rhys/progs/roc/IntermediateCodeGenerator.h
@@ -2142,6 +2147,7 @@ CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/pthread/sched.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/runetype.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/sched.h
+ /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stddef.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdint.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdio.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdlib.h
@@ -2244,24 +2250,25 @@ CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_time.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wchar.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wctype.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___gnuc_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_arg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_max_align_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_null.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_nullptr_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_offsetof.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_ptrdiff_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_size_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_wchar_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/limits.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___gnuc_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_arg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_max_align_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_null.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_nullptr_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_offsetof.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_ptrdiff_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_size_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_wchar_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/limits.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/ptrcheck.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h
  /Users/rhys/progs/roc/Environment.h
  /Users/rhys/progs/roc/EnvironmentAnalyzer.h
  /Users/rhys/progs/roc/ErrorHandling.h
@@ -3022,6 +3029,7 @@ CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/pthread/sched.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/runetype.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/sched.h
+ /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stddef.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdint.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdio.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdlib.h
@@ -3124,24 +3132,25 @@ CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_time.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wchar.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wctype.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___gnuc_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_arg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_max_align_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_null.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_nullptr_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_offsetof.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_ptrdiff_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_size_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_wchar_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/limits.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___gnuc_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_arg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_max_align_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_null.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_nullptr_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_offsetof.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_ptrdiff_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_size_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_wchar_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/limits.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/ptrcheck.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h
  /Users/rhys/progs/roc/Environment.h
  /Users/rhys/progs/roc/IntermediateCodeGenerator.h
  /Users/rhys/progs/roc/Lexer.h
@@ -3705,6 +3714,7 @@ CMakeFiles/roc.dir/Lexer.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/pthread/sched.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/runetype.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/sched.h
+ /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stddef.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdint.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdio.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdlib.h
@@ -3807,24 +3817,25 @@ CMakeFiles/roc.dir/Lexer.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_time.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wchar.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wctype.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___gnuc_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_arg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_max_align_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_null.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_nullptr_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_offsetof.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_ptrdiff_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_size_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_wchar_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/limits.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___gnuc_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_arg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_max_align_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_null.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_nullptr_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_offsetof.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_ptrdiff_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_size_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_wchar_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/limits.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/ptrcheck.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h
  /Users/rhys/progs/roc/ErrorHandling.h
  /Users/rhys/progs/roc/Lexer.h
 
@@ -4395,6 +4406,7 @@ CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/pthread/sched.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/runetype.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/sched.h
+ /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stddef.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdint.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdio.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdlib.h
@@ -4497,24 +4509,25 @@ CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_time.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wchar.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wctype.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___gnuc_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_arg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_max_align_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_null.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_nullptr_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_offsetof.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_ptrdiff_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_size_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_wchar_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/limits.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___gnuc_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_arg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_max_align_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_null.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_nullptr_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_offsetof.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_ptrdiff_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_size_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_wchar_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/limits.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/ptrcheck.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h
  /Users/rhys/progs/roc/Environment.h
  /Users/rhys/progs/roc/IntermediateCodeGenerator.h
  /Users/rhys/progs/roc/Lexer.h
@@ -5090,6 +5103,7 @@ CMakeFiles/roc.dir/Parser.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/pthread/sched.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/runetype.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/sched.h
+ /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stddef.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdint.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdio.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdlib.h
@@ -5192,24 +5206,25 @@ CMakeFiles/roc.dir/Parser.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_time.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wchar.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wctype.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___gnuc_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_arg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_max_align_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_null.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_nullptr_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_offsetof.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_ptrdiff_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_size_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_wchar_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/limits.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___gnuc_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_arg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_max_align_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_null.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_nullptr_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_offsetof.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_ptrdiff_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_size_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_wchar_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/limits.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/ptrcheck.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h
  /Users/rhys/progs/roc/ErrorHandling.h
  /Users/rhys/progs/roc/Lexer.h
  /Users/rhys/progs/roc/Parser.h
@@ -5994,6 +6009,7 @@ CMakeFiles/roc.dir/ROC.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/pthread/sched.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/runetype.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/sched.h
+ /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stddef.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdint.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdio.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdlib.h
@@ -6096,24 +6112,25 @@ CMakeFiles/roc.dir/ROC.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_time.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wchar.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wctype.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___gnuc_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_arg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_max_align_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_null.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_nullptr_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_offsetof.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_ptrdiff_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_size_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_wchar_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/limits.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___gnuc_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_arg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_max_align_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_null.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_nullptr_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_offsetof.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_ptrdiff_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_size_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_wchar_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/limits.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/ptrcheck.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h
  /Users/rhys/progs/roc/ARM64CodeGenerator.h
  /Users/rhys/progs/roc/ASCodeGenerator.h
  /Users/rhys/progs/roc/Environment.h
@@ -6880,6 +6897,7 @@ CMakeFiles/roc.dir/TypeAnalyzer.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/pthread/sched.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/runetype.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/sched.h
+ /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stddef.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdint.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdio.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdlib.h
@@ -6982,24 +7000,25 @@ CMakeFiles/roc.dir/TypeAnalyzer.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_time.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wchar.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wctype.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___gnuc_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_arg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_max_align_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_null.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_nullptr_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_offsetof.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_ptrdiff_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_size_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_wchar_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/limits.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___gnuc_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_arg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_max_align_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_null.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_nullptr_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_offsetof.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_ptrdiff_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_size_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_wchar_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/limits.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/ptrcheck.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h
  /Users/rhys/progs/roc/Environment.h
  /Users/rhys/progs/roc/ErrorHandling.h
  /Users/rhys/progs/roc/Lexer.h
@@ -7596,6 +7615,7 @@ CMakeFiles/roc.dir/main.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/pthread/sched.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/runetype.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/sched.h
+ /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stddef.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdint.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdio.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/stdlib.h
@@ -7698,24 +7718,25 @@ CMakeFiles/roc.dir/main.cpp.o
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_time.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wchar.h
  /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include/xlocale/_wctype.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___gnuc_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg___va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_arg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_copy.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stdarg_va_list.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_header_macro.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_max_align_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_null.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_nullptr_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_offsetof.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_ptrdiff_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_size_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/__stddef_wchar_t.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/limits.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdarg.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stddef.h
- /Library/Developer/CommandLineTools/usr/lib/clang/16/include/stdint.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___gnuc_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg___va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_arg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_copy.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stdarg_va_list.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_header_macro.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_max_align_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_null.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_nullptr_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_offsetof.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_ptrdiff_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_size_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/__stddef_wchar_t.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/limits.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/ptrcheck.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdarg.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stddef.h
+ /Library/Developer/CommandLineTools/usr/lib/clang/17/include/stdint.h
  /Users/rhys/progs/roc/Environment.h
  /Users/rhys/progs/roc/IntermediateCodeGenerator.h
  /Users/rhys/progs/roc/Lexer.h

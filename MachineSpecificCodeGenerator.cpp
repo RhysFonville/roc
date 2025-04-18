@@ -1,4 +1,5 @@
 #include "MachineSpecificCodeGenerator.h"
+#include <cstdlib>
 
 const std::vector<std::string>& MachineSpecificCodeGenerator::run() {
 	for (const IRCommand& command : commands) {
@@ -31,11 +32,11 @@ void MachineSpecificCodeGenerator::generate_command(const IRCommand& command) {
 		case IRCommandType::DIV:
 			div(command);
 			return;
-		case IRCommandType::XOR:
-			xor_cmd(command);
-			return;
 		case IRCommandType::NEG:
 			neg(command);
+			return;
+		case IRCommandType::XOR:
+			xor_cmd(command);
 			return;
 		case IRCommandType::CALL:
 			call(command);
@@ -46,6 +47,15 @@ void MachineSpecificCodeGenerator::generate_command(const IRCommand& command) {
 		case IRCommandType::FUNC:
 			func(command);
 			return;
+		case IRCommandType::ENTER_STACK:
+			enter_stack(command);
+			return;
+		case IRCommandType::EXIT_STACK:
+			exit_stack(command);
+			return;
+		case IRCommandType::LABEL:
+			label(command);
+			return;
 		case IRCommandType::PUSH:
 			push(command);
 			return;
@@ -55,14 +65,20 @@ void MachineSpecificCodeGenerator::generate_command(const IRCommand& command) {
 		case IRCommandType::LEA:
 			lea(command);
 			return;
-		case IRCommandType::LABEL:
-			label(command);
-			return;
 		case IRCommandType::DIRECTIVE:
 			directive(command);
 			return;
-		case IRCommandType::LEAVE:
-			leave(command);
+		case IRCommandType::STORE:
+			store(command);
+			return;
+		case IRCommandType::LOAD:
+			load(command);
+			return;
+		case IRCommandType::NOTHING:
+			nothing(command);
+			return;
+		case IRCommandType::ZERO:
+			zero(command);
 			return;
 		default:
 			asm_out.push_back("Not supported just yet ;)");

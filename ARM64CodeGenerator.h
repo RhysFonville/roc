@@ -9,10 +9,13 @@ public:
 		: MachineSpecificCodeGenerator{commands} { }
 
 private:
-	size_t stack_sub{0u};
+	// https://community.arm.com/arm-community-blogs/b/architectures-and-processors-blog/posts/using-the-stack-in-aarch32-and-aarch64
+	// 
+	size_t sp{0u};
+	size_t bp{0u};
 
 	std::string asm_val_str(const ASMVal& val) const override;
-	std::string basic_translation(const IRCommand& command);
+	std::string basic_translation(const IRCommand& command, const std::string& diff_cmd = "");
 
 	void preamble() override;
 	void move(const IRCommand& command) override;
@@ -20,17 +23,23 @@ private:
 	void sub(const IRCommand& command) override;
 	void mul(const IRCommand& command) override;
 	void div(const IRCommand& command) override;
-	void xor_cmd(const IRCommand& command) override;
 	void neg(const IRCommand& command) override;
+	void xor_cmd(const IRCommand& command) override;
 	void call(const IRCommand& command) override;
 	void ret(const IRCommand& command) override;
 	void func(const IRCommand& command) override;
+	void set_arg(const IRCommand& command) override;
+	void enter_stack(const IRCommand& command) override;
+	void exit_stack(const IRCommand& command) override;
+	void label(const IRCommand& command) override;
 	void push(const IRCommand& command) override;
 	void pop(const IRCommand& command) override;
 	void lea(const IRCommand& command) override;
-	void label(const IRCommand& command) override;
 	void directive(const IRCommand& command) override;
-	void leave(const IRCommand& command) override;
+	void store(const IRCommand& command) override;
+	void load(const IRCommand& command) override;
+	void nothing(const IRCommand& command) override;
+	void zero(const IRCommand& command) override;
 
 	const std::map<IRCommandType, std::string> arm_cmds{
 		{IRCommandType::MOVE, "mov"},
@@ -38,14 +47,8 @@ private:
 		{IRCommandType::SUB, "sub"},
 		{IRCommandType::MULT, "mul"},
 		{IRCommandType::DIV, "div"},
-		{IRCommandType::XOR, "xor"},
-		{IRCommandType::NEG, "neg"},
-		{IRCommandType::CALL, "call"},
+		{IRCommandType::CALL, "bl"},
 		{IRCommandType::RET, "ret"},
-		{IRCommandType::PUSH, "push"},
-		{IRCommandType::POP, "pop"},
-		{IRCommandType::LEA, "lea"},
-		{IRCommandType::LEAVE, "leave"}
 	};
 
 	const std::vector<ASMRegister> arm_registers{
@@ -65,7 +68,8 @@ private:
 		{std::array<std::string, 2>{"x23", "w23"}},
 		{std::array<std::string, 2>{"sp", "sp"}},
 		{std::array<std::string, 2>{"x29", "w29"}},
-		{std::array<std::string, 2>{"pc", "pc"}}
+		{std::array<std::string, 2>{"pc", "pc"}},
+		{std::array<std::string, 2>{"x30", "w30"}}
 	};
 };
 

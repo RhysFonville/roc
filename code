@@ -1,5 +1,7 @@
-i32 func() { i32 x = 7; return x; }
 i32 main() {
-	return func();
+	i32 x = 6;
+	i32 y = 3;
+	y = x + 3 * x + 24;
+	write(1, &(y as i8), 1);
+	return x;
 }
-

@@ -1,0 +1,62 @@
+[
+{
+  "directory": "/Users/rhys/progs/roc",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++   -g -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.1 -o CMakeFiles/roc.dir/main.cpp.o -c /Users/rhys/progs/roc/main.cpp",
+  "file": "/Users/rhys/progs/roc/main.cpp",
+  "output": "CMakeFiles/roc.dir/main.cpp.o"
+},
+{
+  "directory": "/Users/rhys/progs/roc",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++   -g -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.1 -o CMakeFiles/roc.dir/ROC.cpp.o -c /Users/rhys/progs/roc/ROC.cpp",
+  "file": "/Users/rhys/progs/roc/ROC.cpp",
+  "output": "CMakeFiles/roc.dir/ROC.cpp.o"
+},
+{
+  "directory": "/Users/rhys/progs/roc",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++   -g -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.1 -o CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o -c /Users/rhys/progs/roc/ARM64CodeGenerator.cpp",
+  "file": "/Users/rhys/progs/roc/ARM64CodeGenerator.cpp",
+  "output": "CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o"
+},
+{
+  "directory": "/Users/rhys/progs/roc",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++   -g -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.1 -o CMakeFiles/roc.dir/ASCodeGenerator.cpp.o -c /Users/rhys/progs/roc/ASCodeGenerator.cpp",
+  "file": "/Users/rhys/progs/roc/ASCodeGenerator.cpp",
+  "output": "CMakeFiles/roc.dir/ASCodeGenerator.cpp.o"
+},
+{
+  "directory": "/Users/rhys/progs/roc",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++   -g -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.1 -o CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o -c /Users/rhys/progs/roc/MachineSpecificCodeGenerator.cpp",
+  "file": "/Users/rhys/progs/roc/MachineSpecificCodeGenerator.cpp",
+  "output": "CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o"
+},
+{
+  "directory": "/Users/rhys/progs/roc",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++   -g -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.1 -o CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o -c /Users/rhys/progs/roc/IntermediateCodeGenerator.cpp",
+  "file": "/Users/rhys/progs/roc/IntermediateCodeGenerator.cpp",
+  "output": "CMakeFiles/roc.dir/IntermediateCodeGenerator.cpp.o"
+},
+{
+  "directory": "/Users/rhys/progs/roc",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++   -g -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.1 -o CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o -c /Users/rhys/progs/roc/EnvironmentAnalyzer.cpp",
+  "file": "/Users/rhys/progs/roc/EnvironmentAnalyzer.cpp",
+  "output": "CMakeFiles/roc.dir/EnvironmentAnalyzer.cpp.o"
+},
+{
+  "directory": "/Users/rhys/progs/roc",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++   -g -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.1 -o CMakeFiles/roc.dir/TypeAnalyzer.cpp.o -c /Users/rhys/progs/roc/TypeAnalyzer.cpp",
+  "file": "/Users/rhys/progs/roc/TypeAnalyzer.cpp",
+  "output": "CMakeFiles/roc.dir/TypeAnalyzer.cpp.o"
+},
+{
+  "directory": "/Users/rhys/progs/roc",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++   -g -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.1 -o CMakeFiles/roc.dir/Parser.cpp.o -c /Users/rhys/progs/roc/Parser.cpp",
+  "file": "/Users/rhys/progs/roc/Parser.cpp",
+  "output": "CMakeFiles/roc.dir/Parser.cpp.o"
+},
+{
+  "directory": "/Users/rhys/progs/roc",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++   -g -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.1 -o CMakeFiles/roc.dir/Lexer.cpp.o -c /Users/rhys/progs/roc/Lexer.cpp",
+  "file": "/Users/rhys/progs/roc/Lexer.cpp",
+  "output": "CMakeFiles/roc.dir/Lexer.cpp.o"
+}
+]

@@ -68,11 +68,11 @@ std::string ASCodeGenerator::basic_translation(const IRCommand& command, uint8_t
 
 	if (arg3.has_value()) {
 		if (!comp_asm_val(arg1.value(), arg2.value())) {
-			move(IRCommand{IRCommandType::MOVE, std::make_tuple(
+			move(IRCommand{IRCommandType::MOVE, {
 				arg1,
 				arg2,
 				std::nullopt
-			)});
+			}});
 		}
 
 		ret += asm_val_str(arg3.value()) + ", " + asm_val_str(arg1.value());
@@ -99,8 +99,8 @@ void ASCodeGenerator::move(const IRCommand& command) {
 		// If mem <- mem
 		if ((reg_lhs->reg->name == RegisterName::Base || reg_lhs->dereferenced) && (reg_rhs->reg->name == RegisterName::Base || reg_rhs->dereferenced)) {
 			auto reg{std::make_shared<ASMValRegister>(reg_rhs->held_type, occupy_next_reg())};
-			IRCommand temp_move{IRCommandType::MOVE, std::make_tuple(reg, reg_rhs, std::nullopt)};
-			IRCommand move_into{IRCommandType::MOVE, std::make_tuple(reg_lhs, reg, std::nullopt)};
+			IRCommand temp_move{IRCommandType::MOVE, {reg, reg_rhs, std::nullopt}};
+			IRCommand move_into{IRCommandType::MOVE, {reg_lhs, reg, std::nullopt}};
 			move(temp_move);
 			move(move_into);
 			reg->reg->in_use = false;

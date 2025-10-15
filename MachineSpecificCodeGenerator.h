@@ -18,6 +18,13 @@ struct ASMRegister {
 	std::map<uint8_t, std::string> sizes{};
 };
 
+static const std::optional<ASMVal>& get_first(const IRCommand& cmd) noexcept { return cmd.args.first; }
+static const std::optional<ASMVal>& get_second(const IRCommand& cmd) noexcept { return cmd.args.second; }
+static const std::optional<ASMVal>& get_third(const IRCommand& cmd) noexcept { return cmd.args.third; }
+
+static std::shared_ptr<ASMValRegister> cast_reg(const ASMVal& reg) noexcept { return std::dynamic_pointer_cast<ASMValRegister>(reg); }
+static std::shared_ptr<ASMValNonRegister> cast_non_reg(const ASMVal& non_reg) noexcept { return std::dynamic_pointer_cast<ASMValNonRegister>(non_reg); }
+
 class MachineSpecificCodeGenerator {
 public:
 	MachineSpecificCodeGenerator() { }
@@ -29,10 +36,6 @@ public:
 protected:
 	std::vector<IRCommand> commands{};
 	std::vector<std::string> asm_out{};
-
-	static const std::optional<ASMVal>& get_first(const IRCommand& cmd) noexcept { return std::get<0>(cmd.args); }
-	static const std::optional<ASMVal>& get_second(const IRCommand& cmd) noexcept { return std::get<1>(cmd.args); }
-	static const std::optional<ASMVal>& get_third(const IRCommand& cmd) noexcept { return std::get<2>(cmd.args); }
 
 	virtual std::string asm_val_str(const ASMVal& val) const { return ""; }
 
@@ -57,7 +60,8 @@ protected:
 	virtual void pop(const IRCommand& command) { }
 	virtual void lea(const IRCommand& command) { }
 	virtual void directive(const IRCommand& command) { }
-	virtual void store(const IRCommand& command) { }
+	virtual void decl_var(const IRCommand& command) { }
+	virtual void set_var(const IRCommand& command) { }
 	virtual void load(const IRCommand& command) { }
 	virtual void nothing(const IRCommand& command) { }
 	virtual void zero(const IRCommand& command) { }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IntermediateCodeGenerator.h"
 #include "MachineSpecificCodeGenerator.h"
 
 class ARM64CodeGenerator : public MachineSpecificCodeGenerator {
@@ -10,12 +11,19 @@ public:
 
 private:
 	// https://community.arm.com/arm-community-blogs/b/architectures-and-processors-blog/posts/using-the-stack-in-aarch32-and-aarch64
-	// 
+	// https://community.arm.com/arm-community-blogs/b/architectures-and-processors-blog/posts/using-the-stack-in-aarch64-implementing-push-and-pop
+	// https://learn.microsoft.com/en-us/cpp/build/arm64-windows-abi-conventions?view=msvc-170#alignment
 	size_t sp{0u};
 	size_t bp{0u};
 
+	std::map<ASMValNonRegister, int> var_offsets{};
+
 	std::string asm_val_str(const ASMVal& val) const override;
 	std::string basic_translation(const IRCommand& command, const std::string& diff_cmd = "");
+
+	bool is_basic_register(const ASMVal& val);
+	bool is_register(const ASMVal& val);
+	bool is_variable(const ASMVal& val);
 
 	void preamble() override;
 	void move(const IRCommand& command) override;
@@ -36,7 +44,8 @@ private:
 	void pop(const IRCommand& command) override;
 	void lea(const IRCommand& command) override;
 	void directive(const IRCommand& command) override;
-	void store(const IRCommand& command) override;
+	void decl_var(const IRCommand& command) override;
+	void set_var(const IRCommand& command) override;
 	void load(const IRCommand& command) override;
 	void nothing(const IRCommand& command) override;
 	void zero(const IRCommand& command) override;

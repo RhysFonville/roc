@@ -170,12 +170,16 @@ ASMVal IntermediateCodeGenerator::identifier_expression(const std::shared_ptr<Id
 		insert_command(IRCommand{IRCommandType::LOAD, std::make_tuple(
 			reg, std::nullopt, std::nullopt
 		)});*/
-		auto var{std::make_shared<ASMValNonRegister>(it->type, it->name)};
-		insert_command(IRCommand{IRCommandType::LOAD, std::make_tuple(
-			var, std::nullopt, std::nullopt
-		)});
-		return var;
+		auto var{std::make_shared<ASMValNonRegister>(it->type, it->name, true)};
+		auto reg{std::make_shared<ASMValRegister>(expr->type, occupy_next_reg())};
+		insert_command(IRCommand{IRCommandType::LOAD, {
+			reg,
+			var,
+			std::nullopt
+		}});
+		return reg;
 	} else {
+		std::cout << "what\n";
 		return std::make_shared<ASMValNonRegister>(it->type, expr->identifier.value);
 	}
 }
@@ -190,14 +194,14 @@ ASMVal IntermediateCodeGenerator::literal_expression(const std::shared_ptr<Liter
 	} else if (expr->value.type == TokenType::STRING_LITERAL) {
 		push_insert_spot(0);
 		auto str{std::make_shared<ASMValNonRegister>(expr->type, ".STR" + std::to_string(str_count++))};
-		insert_command(IRCommand{IRCommandType::LABEL, std::make_tuple(
+		insert_command(IRCommand{IRCommandType::LABEL, {
 			str, std::nullopt, std::nullopt
-		)});
-		insert_command(IRCommand{IRCommandType::DIRECTIVE, std::make_tuple(
+		}});
+		insert_command(IRCommand{IRCommandType::DIRECTIVE, {
 			std::make_shared<ASMValNonRegister>(nullptr, DIRECTIVES::ZSTR),
 			std::make_shared<ASMValNonRegister>(nullptr, "\"" + expr->value.value + "\""),
 			std::nullopt
-		)});
+		}});
 		pop_insert_spot();
 		return str;
 	} else if (expr->value.type == TokenType::NUMBER_LITERAL) {
@@ -218,31 +222,31 @@ ASMVal IntermediateCodeGenerator::unary_expression(const std::shared_ptr<UnaryEx
 	auto rhs{generate_expression(expr->expr)};
 	auto reg{occupy_next_reg()};
 	if (expr->op.type == TokenType::NOT) {
-		insert_command(IRCommand{IRCommandType::XOR, std::make_tuple(
+		insert_command(IRCommand{IRCommandType::XOR, {
 			std::make_shared<ASMValRegister>(rhs->held_type, reg),
 			rhs,
 			std::make_shared<ASMValNonRegister>(rhs->held_type, "1")
-		)});
+		}});
 	} else if (expr->op.type == TokenType::MINUS) {
-		insert_command(IRCommand{IRCommandType::NEG, std::make_tuple(
+		insert_command(IRCommand{IRCommandType::NEG, {
 			std::make_shared<ASMValRegister>(rhs->held_type, reg),
 			rhs,
 			std::nullopt
-		)});
+		}});
 	} else if (expr->op.type == TokenType::AMPERSAND) {
 		auto ret{std::make_shared<ASMValRegister>(expr->type, reg)};
-		insert_command(IRCommand{IRCommandType::LEA, std::make_tuple(
+		insert_command(IRCommand{IRCommandType::LEA, {
 			ret, rhs, std::nullopt
-		)});
+		}});
 
 		unoccupy_if_reg(rhs);
 		return ret;
 	} else if (expr->op.type == TokenType::STAR) {
 		ASMValRegister deref_reg{expr->type, reg, true};
 		deref_reg.dereferenced = false;
-		insert_command(IRCommand{IRCommandType::MOVE, std::make_tuple(
+		insert_command(IRCommand{IRCommandType::MOVE, {
 			std::make_shared<ASMValRegister>(deref_reg), rhs, std::nullopt
-		)});
+		}});
 		deref_reg.dereferenced = true;
 
 		unoccupy_if_reg(rhs);
@@ -254,13 +258,16 @@ ASMVal IntermediateCodeGenerator::unary_expression(const std::shared_ptr<UnaryEx
 }
 ASMVal IntermediateCodeGenerator::binary_expression(const std::shared_ptr<BinaryExpression>& expr) {
 	ASMVal lhs{generate_expression(expr->sides.first)};
+	size_t lhs_cmd_insert_spot{commands_insert};
 	ASMVal rhs{generate_expression(expr->sides.second)};
+
 	switch (expr->op.type) {
 		case TokenType::PLUS:
 		case TokenType::MINUS:
 		case TokenType::STAR:
 		case TokenType::SLASH: {
 			// If literal (op) literal
+			// We're just doing the math
 			if (auto lhs_non{std::dynamic_pointer_cast<ASMValNonRegister>(lhs)}) {
 				if (auto rhs_non{std::dynamic_pointer_cast<ASMValNonRegister>(rhs)}) {
 					auto execute_op{[&](auto x, auto y, TokenType op) {
@@ -271,10 +278,11 @@ ASMVal IntermediateCodeGenerator::binary_expression(const std::shared_ptr<Binary
 						else return x;
 					}};
 					std::string asm_val{std::to_string(execute_op(
-						is_signed(lhs_non->held_type) ? (long long)std::stoll(lhs_non->value) : (unsigned long long)std::stoull(lhs_non->value),
-						is_signed(rhs_non->held_type) ? (long long)std::stoll(rhs_non->value) : (unsigned long long)std::stoull(rhs_non->value),
+						lhs_non->held_type->is_signed() ? (long long)std::stoll(lhs_non->value) : (unsigned long long)std::stoull(lhs_non->value),
+						rhs_non->held_type->is_signed() ? (long long)std::stoll(rhs_non->value) : (unsigned long long)std::stoull(rhs_non->value),
 						expr->op.type
 					))};
+					unoccupy_if_reg(rhs);
 					return std::make_shared<ASMValNonRegister>(lhs->held_type, asm_val);
 				}
 			}
@@ -288,21 +296,45 @@ ASMVal IntermediateCodeGenerator::binary_expression(const std::shared_ptr<Binary
 			if (auto lhs_reg{std::dynamic_pointer_cast<ASMValRegister>(lhs)}) {
 				if (lhs_reg->offset.has_value()) {
 					auto reg{std::make_shared<ASMValRegister>(lhs->held_type, occupy_next_reg())};
-					insert_command(IRCommand{type, std::make_tuple(reg, lhs, rhs)});
+					insert_command(IRCommand{type, {reg, lhs, rhs}});
 					unoccupy_if_reg(lhs);
 					unoccupy_if_reg(rhs);
 					return reg;
 				} else {
-					insert_command(IRCommand{type, std::make_tuple(lhs, lhs, rhs)});
+					insert_command(IRCommand{type, {lhs, lhs, rhs}});
 					unoccupy_if_reg(lhs);
 					unoccupy_if_reg(rhs);
 					return lhs;
 				}
 			}
 		}
-		case TokenType::EQUAL:
-			insert_command(IRCommand{IRCommandType::MOVE, std::make_tuple(lhs, rhs, std::nullopt)});
+		case TokenType::EQUAL: {
+			if (auto id{std::dynamic_pointer_cast<IdentifierExpression>(expr->sides.first)}; id != nullptr) {
+				commands.erase(commands.begin()+lhs_cmd_insert_spot-1);
+				commands_insert--;
+
+				unoccupy_if_reg(lhs);
+				auto var{std::ranges::find_if(stacks.top().vars, [&](auto v){return v.name==id->identifier.value;})};
+				lhs = std::make_shared<ASMValNonRegister>(var->type, var->name, true);
+			}
+
+			rhs->print();
+			std::cout << std::endl;
+			lhs->print();
+			std::cout << std::endl;
+
+			//auto mid{std::make_shared<ASMValRegister>(rhs->held_type, occupy_next_reg())};
+			insert_command(IRCommand{IRCommandType::SET_VAR, {
+				lhs,
+				//mid,
+				std::nullopt,
+				rhs
+			}});
+			
+			//mid->reg->in_use = false;
+			unoccupy_if_reg(lhs);
 			break;
+		}
 		default:
 			break;
 	}
@@ -380,11 +412,11 @@ ASMVal IntermediateCodeGenerator::block_expression(const std::shared_ptr<BlockEx
 			)});
 		}*/
 
-		insert_command(IRCommand{IRCommandType::ENTER_STACK, std::make_tuple(
+		insert_command(IRCommand{IRCommandType::ENTER_STACK, {
 			std::make_shared<ASMValNonRegister>(create_sz(TypeEnum::U64), std::to_string(-stacks.top().neg_size)),
 			std::make_shared<ASMValNonRegister>(create_sz(TypeEnum::BOOL), std::to_string(stacks.top().call_function)),
 			std::nullopt
-		)});
+		}});
 
 		stacks.pop();
 	}
@@ -450,11 +482,11 @@ ASMVal IntermediateCodeGenerator::call_expression(const std::shared_ptr<CallExpr
 		name = {funcs[name]};
 	}
 
-	insert_command(IRCommand{IRCommandType::CALL, std::make_tuple(
+	insert_command(IRCommand{IRCommandType::CALL, {
 		std::make_shared<ASMValNonRegister>(expr->type, name),
 		std::nullopt,
 		std::nullopt
-	)});
+	}});
 	
 	/*
 	if (pushed_size > 0) {
@@ -474,11 +506,11 @@ ASMVal IntermediateCodeGenerator::return_expression(const std::shared_ptr<Return
 	if (expr->return_expression != nullptr) {
 		Type mv_type{expr->type};
 		if (mv_type->get_size() < SZ_E) mv_type = create_sz(TypeEnum::U32);
-		insert_command(IRCommand{IRCommandType::MOVE, std::make_tuple(
+		insert_command(IRCommand{IRCommandType::MOVE, {
 			std::make_shared<ASMValRegister>(mv_type, occupy_reg(RegisterName::Ret)),
 			generate_expression(expr->return_expression),
 			std::nullopt
-		)});
+		}});
 	}
 
 	if (func != nullptr) {
@@ -494,12 +526,12 @@ ASMVal IntermediateCodeGenerator::return_expression(const std::shared_ptr<Return
 			});
 		}
 		*/
-		insert_command(IRCommand{IRCommandType::EXIT_STACK, std::make_tuple(
+		insert_command(IRCommand{IRCommandType::EXIT_STACK, {
 			std::make_shared<ASMValNonRegister>(create_sz(TypeEnum::U64), std::to_string(-stacks.top().neg_size)),
 			std::make_shared<ASMValNonRegister>(create_sz(TypeEnum::BOOL), std::to_string(stacks.top().call_function)),
 			std::nullopt
-		)});
-		insert_command(IRCommand{IRCommandType::RET, std::make_tuple(std::nullopt, std::nullopt, std::nullopt)});
+		}});
+		insert_command(IRCommand{IRCommandType::RET, {std::nullopt, std::nullopt, std::nullopt}});
 	}
 
 	if (expr->return_expression != nullptr)
@@ -540,28 +572,32 @@ void IntermediateCodeGenerator::variable_declaration_statement(const std::shared
 		}
 	);*/
 	//auto offset{create_var(stmt->identifier->identifier.value, stmt->type)};
-	insert_command(IRCommand{IRCommandType::STORE, std::make_tuple(
+	auto mid{std::make_shared<ASMValRegister>(stmt->initializer->type, occupy_next_reg())};
+	insert_command(IRCommand{IRCommandType::DECL_VAR, {
 		//std::make_shared<ASMValRegister>(stmt->type, offset),
-		std::make_shared<ASMValNonRegister>(stmt->type, stmt->identifier->identifier.value),
-		generate_expression(stmt->initializer),
-		std::nullopt
-	)});
+		std::make_shared<ASMValNonRegister>(stmt->type, stmt->identifier->identifier.value, true),
+		mid,
+		generate_expression(stmt->initializer)
+	}});
+	mid->reg->in_use = false;
+
+	stacks.top().vars.push_back(StackVar{stmt->identifier->identifier.value, stmt->type, 0});
 }
 
 void IntermediateCodeGenerator::function_declaration_statement(const std::shared_ptr<FunctionDeclarationStatement>& stmt) {
 	std::string name{mangle_function(stmt)};
 	if (stmt->identifier->identifier.value == "main") {
-		name = stmt->identifier->identifier.value;	
+		name = stmt->identifier->identifier.value;
 	}
-	funcs.insert(std::make_tuple(stmt->identifier->identifier.value, name));
+	funcs.insert({stmt->identifier->identifier.value, name});
 
 	push_insert_spot(0);
 
-	insert_command(IRCommand{IRCommandType::FUNC, std::make_tuple(
-		std::make_shared<ASMValNonRegister>(stmt->return_type, name),
+	insert_command(IRCommand{IRCommandType::FUNC, {
+		std::make_shared<ASMValNonRegister>(stmt->return_type, name, true),
 		std::nullopt,
 		std::nullopt
-	)});
+	}});
 	/*
 	insert_command(IRCommand{IRCommandType::PUSH, std::make_tuple(
 		std::make_shared<ASMValRegister>(create_sz(TypeEnum::U64), occupy_reg(RegisterName::Base)),

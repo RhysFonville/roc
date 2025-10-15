@@ -34,7 +34,8 @@ enum class IRCommandType {
 	POP,
 	LEA,
 	DIRECTIVE,
-	STORE,
+	DECL_VAR,
+	SET_VAR,
 	LOAD,
 	NOTHING,
 	ZERO
@@ -105,18 +106,22 @@ struct ASMValRegister : public ASMValHolder {
 	std::optional<int> offset{std::nullopt};
 	bool dereferenced{};
 
+	bool operator<(const ASMValRegister& rhs) const noexcept {
+		return ((int)reg->name < (int)rhs.reg->name);
+	}
+
 	bool operator==(const ASMValRegister& reg) const noexcept {
 		return (comp_types(held_type, reg.held_type) && *this->reg == *reg.reg &&
-				reg_size == reg.reg_size && offset == offset &&
-				dereferenced == reg.dereferenced);
+				reg_size == reg.reg_size && offset == offset && dereferenced == reg.dereferenced);
 	}
 
 	void print(std::ostream& os) const noexcept override {
 		static std::vector<std::string> reg_strs{
-			"RET", "ARG1", "ARG2", "ARG3", "ARG4", "ARG5", "ARG6",
-			"CP1", "CP2", "CP3", "CP4", "CP5",
+			"RET", "CP1", "ARG4", "ARG3", "ARG2", "ARG1", "ARG5", "ARG6",
 			"GP1", "GP2",
-			"STACK", "BASE", "INSTRUCTION"
+			"CP2", "CP3", "CP4", "CP5",
+			"STACK", "BASE", "INSTRUCTION",
+			"RETADDRESS"
 		};
 		os << "% (sz" << std::to_string(reg_size) << ")" << reg_strs[(size_t)reg->name];
 		if (offset.has_value()) os << "-" << offset.value();
@@ -126,12 +131,19 @@ struct ASMValRegister : public ASMValHolder {
 struct ASMValNonRegister : public ASMValHolder {
 	ASMValNonRegister() { }
 	ASMValNonRegister(const Type& held_type, const std::string& value)
-		: ASMValHolder{held_type}, value{value} { }
+		: ASMValHolder{held_type}, value{value}, is_var{false} { }
+	ASMValNonRegister(const Type& held_type, const std::string& value, bool is_var)
+		: ASMValHolder{held_type}, value{value}, is_var{is_var} { }
 
 	std::string value{};
+	bool is_var{};
 
 	void print(std::ostream& os) const noexcept override {
 		os << value;
+	}
+
+	bool operator<(const ASMValNonRegister& rhs) const noexcept {
+		return value < rhs.value;
 	}
 
 	bool operator==(const ASMValNonRegister& non) const noexcept {
@@ -168,7 +180,11 @@ static std::vector<Register> registers{ // Can't be const
 
 struct IRCommand {
 	IRCommandType type{};
-	std::tuple<std::optional<ASMVal>, std::optional<ASMVal>, std::optional<ASMVal>> args{};
+	struct Args {
+		std::optional<ASMVal> first{};
+		std::optional<ASMVal> second{};
+		std::optional<ASMVal> third{};
+	} args{};
 
 	inline friend std::ostream& operator<<(std::ostream& os, const IRCommand& cmd) noexcept;
 };
@@ -183,14 +199,14 @@ inline std::ostream& operator<<(std::ostream& os, const IRCommand& cmd) noexcept
 
 	os << cmd_strs[(int)cmd.type] << " ";
 
-	if (std::get<0>(cmd.args).has_value()) std::get<0>(cmd.args).value()->print(os);
-	if (std::get<1>(cmd.args).has_value()) { os << ", "; std::get<1>(cmd.args).value()->print(os); }
-	if (std::get<2>(cmd.args).has_value()) { os << ", "; std::get<2>(cmd.args).value()->print(os); }
+	if (cmd.args.first.has_value()) cmd.args.first.value()->print(os);
+	if (cmd.args.second.has_value()) { os << ", "; cmd.args.second.value()->print(os); }
+	if (cmd.args.third.has_value()) { os << ", "; cmd.args.third.value()->print(os); }
 	
 	return os;
 }
 
-void unoccupy_if_reg(ASMVal& value);
+static void unoccupy_if_reg(ASMVal& value);
 
 static int ceiling_multiple(int number, int multiple) {
 	int ret{(int)ceil((double)std::abs(number) / multiple) * multiple};
@@ -211,11 +227,6 @@ private:
 	size_t commands_insert{0};
 
 	std::vector<size_t> insert_jumps{};
-
-	bool is_signed(const Type& t) {
-		if (is_pointer(t)) return false;
-		else return std::dynamic_pointer_cast<TConstructor>(t)->type.is_signed;
-	}
 
 	void insert_command(const IRCommand& command);
 	void push_insert_spot(size_t insert);

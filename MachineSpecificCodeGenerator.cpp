@@ -68,8 +68,11 @@ void MachineSpecificCodeGenerator::generate_command(const IRCommand& command) {
 		case IRCommandType::DIRECTIVE:
 			directive(command);
 			return;
-		case IRCommandType::STORE:
-			store(command);
+		case IRCommandType::DECL_VAR:
+			decl_var(command);
+			return;
+		case IRCommandType::SET_VAR:
+			set_var(command);
 			return;
 		case IRCommandType::LOAD:
 			load(command);

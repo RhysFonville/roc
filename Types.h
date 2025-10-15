@@ -62,8 +62,8 @@ struct TVariable : public TType {
 static bool comp_types(const Type& t1, const Type& t2) noexcept;
 
 struct TPointer : public TType {
-	TPointer() : TType{sizeof(int*)} {}
-	explicit TPointer(const std::shared_ptr<TType>& t) : TType{sizeof(int*)}, inner{t} {}
+	TPointer() : TType{sizeof(void*)} {}
+	explicit TPointer(const std::shared_ptr<TType>& t) : TType{sizeof(void*)}, inner{t} {}
 
 	bool operator==(const TPointer& t) const noexcept {
 		return comp_types(inner, t.inner);

@@ -179,7 +179,7 @@ ASMVal IntermediateCodeGenerator::identifier_expression(const std::shared_ptr<Id
 		}});
 		return reg;
 	} else {
-		std::cout << "what\n";
+		std::cerr << "what\n";
 		return std::make_shared<ASMValNonRegister>(it->type, expr->identifier.value);
 	}
 }
@@ -266,9 +266,9 @@ ASMVal IntermediateCodeGenerator::binary_expression(const std::shared_ptr<Binary
 		case TokenType::MINUS:
 		case TokenType::STAR:
 		case TokenType::SLASH: {
-			// If literal (op) literal
-			// We're just doing the math
 			if (auto lhs_non{std::dynamic_pointer_cast<ASMValNonRegister>(lhs)}) {
+				// If literal (op) literal
+				// We're just doing the math
 				if (auto rhs_non{std::dynamic_pointer_cast<ASMValNonRegister>(rhs)}) {
 					auto execute_op{[&](auto x, auto y, TokenType op) {
 						if (expr->op.type == TokenType::PLUS) return x + y;
@@ -284,6 +284,8 @@ ASMVal IntermediateCodeGenerator::binary_expression(const std::shared_ptr<Binary
 					))};
 					unoccupy_if_reg(rhs);
 					return std::make_shared<ASMValNonRegister>(lhs->held_type, asm_val);
+				} else {
+					std::swap(lhs, rhs);
 				}
 			}
 
@@ -294,18 +296,11 @@ ASMVal IntermediateCodeGenerator::binary_expression(const std::shared_ptr<Binary
 			if (expr->op.type == TokenType::SLASH) type = IRCommandType::DIV;
 
 			if (auto lhs_reg{std::dynamic_pointer_cast<ASMValRegister>(lhs)}) {
-				if (lhs_reg->offset.has_value()) {
-					auto reg{std::make_shared<ASMValRegister>(lhs->held_type, occupy_next_reg())};
-					insert_command(IRCommand{type, {reg, lhs, rhs}});
-					unoccupy_if_reg(lhs);
-					unoccupy_if_reg(rhs);
-					return reg;
-				} else {
-					insert_command(IRCommand{type, {lhs, lhs, rhs}});
-					unoccupy_if_reg(lhs);
-					unoccupy_if_reg(rhs);
-					return lhs;
-				}
+				auto reg{std::make_shared<ASMValRegister>(lhs->held_type, occupy_next_reg())};
+				insert_command(IRCommand{type, {reg, lhs, rhs}});
+				unoccupy_if_reg(lhs);
+				unoccupy_if_reg(rhs);
+				return reg;
 			}
 		}
 		case TokenType::EQUAL: {
@@ -317,11 +312,6 @@ ASMVal IntermediateCodeGenerator::binary_expression(const std::shared_ptr<Binary
 				auto var{std::ranges::find_if(stacks.top().vars, [&](auto v){return v.name==id->identifier.value;})};
 				lhs = std::make_shared<ASMValNonRegister>(var->type, var->name, true);
 			}
-
-			rhs->print();
-			std::cout << std::endl;
-			lhs->print();
-			std::cout << std::endl;
 
 			//auto mid{std::make_shared<ASMValRegister>(rhs->held_type, occupy_next_reg())};
 			insert_command(IRCommand{IRCommandType::SET_VAR, {
@@ -347,7 +337,7 @@ ASMVal IntermediateCodeGenerator::block_expression(const std::shared_ptr<BlockEx
 	if (func != nullptr) {
 		push_insert_spot(commands_insert);
 		stacks.push(Stack{0, 0, {}});
-			
+		
 		/*
 		std::vector<Register*> regs{};
 		for (const auto& param : func->params) {
@@ -391,26 +381,6 @@ ASMVal IntermediateCodeGenerator::block_expression(const std::shared_ptr<BlockEx
 		}
 
 		pop_insert_spot();
-		/*int sub{-stacks.top().neg_size};
-		if (sub > 128 && !stacks.top().call_function) { // Red zone
-			sub = ceiling_multiple(sub - 128, 8);
-		} else if (stacks.top().call_function) {
-			sub = ceiling_multiple(sub, 16);
-		} else if (!stacks.top().vars.empty()) {
-			sub = std::max(16, sub);
-		}
-		if (sub != 0) {
-			static auto stack_reg = ASMValRegister{
-				create_sz(TypeEnum::U64), get_reg(RegisterName::Stack)
-			};
-			insert_command(IRCommand{IRCommandType::SUB, std::make_tuple(
-				std::make_shared<ASMValRegister>(stack_reg),
-				std::make_shared<ASMValRegister>(stack_reg),
-				std::make_shared<ASMValNonRegister>(
-					create_sz(TypeEnum::U64), std::to_string(sub)
-				)
-			)});
-		}*/
 
 		insert_command(IRCommand{IRCommandType::ENTER_STACK, {
 			std::make_shared<ASMValNonRegister>(create_sz(TypeEnum::U64), std::to_string(-stacks.top().neg_size)),
@@ -562,32 +532,28 @@ void IntermediateCodeGenerator::expression_statement(const std::shared_ptr<Expre
 }
 
 void IntermediateCodeGenerator::variable_declaration_statement(const std::shared_ptr<VariableDeclarationStatement>& stmt) {
-	/*insert_command(
-		IRCommand{
-			IRCommandType::MOVE,
-			std::make_pair(
-				generate_expression(stmt->initializer),
-				ASMValNonRegister{stmt->identifier->type.size, stmt->identifier->identifier.value}
-			)
-		}
-	);*/
-	//auto offset{create_var(stmt->identifier->identifier.value, stmt->type)};
-	auto mid{std::make_shared<ASMValRegister>(stmt->initializer->type, occupy_next_reg())};
-	insert_command(IRCommand{IRCommandType::DECL_VAR, {
-		//std::make_shared<ASMValRegister>(stmt->type, offset),
-		std::make_shared<ASMValNonRegister>(stmt->type, stmt->identifier->identifier.value, true),
-		mid,
-		generate_expression(stmt->initializer)
+	auto src_reg{std::make_shared<ASMValRegister>(stmt->type, occupy_next_reg())};
+	insert_command(IRCommand{IRCommandType::MOVE, {
+		src_reg,
+		generate_expression(stmt->initializer),
+		std::nullopt
 	}});
-	mid->reg->in_use = false;
 
-	stacks.top().vars.push_back(StackVar{stmt->identifier->identifier.value, stmt->type, 0});
+	insert_command(IRCommand{IRCommandType::DECL_VAR, {
+		std::make_shared<ASMValNonRegister>(stmt->type, stmt->identifier->identifier.value, true),
+		src_reg
+	}});
+
+	src_reg->reg->in_use = false;
+	create_var(stmt->identifier->identifier.value, stmt->type);
 }
 
 void IntermediateCodeGenerator::function_declaration_statement(const std::shared_ptr<FunctionDeclarationStatement>& stmt) {
-	std::string name{mangle_function(stmt)};
+	std::string name{};
 	if (stmt->identifier->identifier.value == "main") {
 		name = stmt->identifier->identifier.value;
+	} else {
+		name = mangle_function(stmt);
 	}
 	funcs.insert({stmt->identifier->identifier.value, name});
 

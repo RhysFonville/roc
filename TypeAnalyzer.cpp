@@ -187,7 +187,8 @@ void TypeAnalyzer::infer_literal_expression(const std::shared_ptr<LiteralExpress
 
 void TypeAnalyzer::infer_grouping_expression(const std::shared_ptr<GroupingExpression>& expr) {
 	infer_expression(expr->expr);
-	expr->type = expr->expr->type;
+	expr->type = fresh_type_variable();
+	type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->expr->type));
 }
 
 void TypeAnalyzer::infer_unary_expression(const std::shared_ptr<UnaryExpression>& expr) {
@@ -226,6 +227,10 @@ void TypeAnalyzer::infer_binary_expression(const std::shared_ptr<BinaryExpressio
 		case TokenType::MINUS:
 		case TokenType::STAR:
 		case TokenType::SLASH:
+			expr->type = fresh_type_variable();
+			type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->sides.first->type));
+			type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->sides.second->type));
+			break;
 		case TokenType::EQUAL_EQUAL:
 		case TokenType::NOT_EQUAL:
 		case TokenType::GREATER:
@@ -233,12 +238,13 @@ void TypeAnalyzer::infer_binary_expression(const std::shared_ptr<BinaryExpressio
 		case TokenType::LESS:
 		case TokenType::LESS_EQUAL:
 		case TokenType::EQUAL:
-			expr->type = fresh_type_variable();
-			type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->sides.first->type));
+			expr->type = std::make_shared<TConstructor>(types.at(TypeEnum::BOOL));
 			break;
 		case TokenType::AND:
 		case TokenType::OR:
 			expr->type = std::make_shared<TConstructor>(types.at(TypeEnum::BOOL));
+			type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->sides.first->type));
+			type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->sides.second->type));
 			break;
 		default:
 			type_error(expr->op, "Invalid binary operation.");
@@ -400,6 +406,7 @@ void TypeAnalyzer::substitute_literal_expression(const std::shared_ptr<LiteralEx
 }
 
 void TypeAnalyzer::substitute_grouping_expression(const std::shared_ptr<GroupingExpression>& expr) {
+	substitute_expression(expr->expr);
 	expr->type = substitute(expr->type);
 }
 

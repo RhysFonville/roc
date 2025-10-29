@@ -55,6 +55,7 @@ void ROC::run(const std::ifstream& file) {
 	for (auto tok : toks) {
 		lex_out << tok << '\n';
 	}
+	lex_out.close();
 
 	Parser parser{toks};
 	auto stmts{parser.run()};
@@ -80,6 +81,7 @@ void ROC::run(const std::ifstream& file) {
 	for (auto cmd : cmds) {
 		ir_out << cmd << '\n';
 	}
+	ir_out.close();
 
 	auto as{get_appropriate_code_generator(cmds)};
 	auto as_cmds{as->run()};

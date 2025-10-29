@@ -1,7 +1,5 @@
 i32 main() {
-	i32 x = 6;
-	i32 y = 3;
-	y = x + 3 * x + 24;
-	write(1, &(y as i8), 1);
-	return x;
+	i32 x = 5;
+	bool y = (x == 5) && ((3 + 5) / 8 <= x);
+	return 0;
 }

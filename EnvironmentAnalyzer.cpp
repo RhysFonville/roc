@@ -51,9 +51,8 @@ void EnvironmentAnalyzer::literal_expression(const std::shared_ptr<LiteralExpres
 		case TokenType::TRUE:
 		case TokenType::FALSE:
 			return;
-		case TokenType::NUMBER_LITERAL: {
+		case TokenType::NUMBER_LITERAL:
 			return;
-		}
 		case TokenType::STRING_LITERAL:
 			return;
 		case TokenType::CHAR_LITERAL:
@@ -78,44 +77,37 @@ void EnvironmentAnalyzer::unary_expression(const std::shared_ptr<UnaryExpression
 		| std::ranges::to<std::vector>()
 	};
 
-	TConstructor expr_type{con(expr->expr->type).value_or(TConstructor{})};
+	std::optional<TConstructor> expr_con{con(expr->expr->type)};
 
 	switch (expr->op.type) {
 		case TokenType::NOT:
 			if (is_pointer(expr->expr->type)) {
 				semantic_error(expr->op, "Incorrect type. Cannot be a pointer.");
-				return;
 			}
-			if (expr_type != types.at(TypeEnum::BOOL)) {
+			if (*expr_con != types.at(TypeEnum::BOOL)) {
 				semantic_error(expr->op, "Incorrect type. Must be a bool."); 
-				return;
 			}
 			break;
 		case TokenType::MINUS:
 			if (is_pointer(expr->expr->type)) {
 				semantic_error(expr->op, "Incorrect type. Cannot be a pointer.");
-				return;
 			}
-			if (std::ranges::find(num_types, expr_type.type) == num_types.end()) {
+			if (std::ranges::find(num_types, expr_con->type) == num_types.end()) {
 				semantic_error(expr->op, "Incorrect type. Must be an number.");
-				return;
 			}
 			break;
 		case TokenType::AMPERSAND:
 			if (auto lit{std::dynamic_pointer_cast<LiteralExpression>(expr->expr)}) {
 				semantic_error(lit->value, "Cannot dereference literal.");
-				return;
 			}
-			if (expr_type == types.at(TypeEnum::NONE)) {
+			if (*expr_con == types.at(TypeEnum::NONE)) {
 				semantic_error(expr->op, "Incorrect type. Cannot dereference a none type.");
-				return;
 			}
 			break;
 		case TokenType::STAR:
 			expr->lvalue = true;
 			if (!is_pointer(expr->expr->type)) {
 				semantic_error(expr->op, "Can only dereference pointer.");
-				return;
 			}
 			break;
 		default:
@@ -134,59 +126,60 @@ void EnvironmentAnalyzer::binary_expression(const std::shared_ptr<BinaryExpressi
 		| std::ranges::to<std::vector>()
 	};
 
-	if (con(expr->sides.first->type) != con(expr->sides.second->type)) {
+	if (!comp_types(expr->sides.first->type, expr->sides.second->type)) {
 		semantic_error(expr->op, "Mismatched types in binary expression.");
 		return;
 	}
 
-	TConstructor lhs_type{con(expr->sides.first->type).value_or(TConstructor{})};
-	TConstructor rhs_type{con(expr->sides.second->type).value_or(TConstructor{})};
+	std::optional<TConstructor> lhs_con{con(expr->sides.first->type)};
+	std::optional<TConstructor> rhs_con{con(expr->sides.second->type)};
 
 	switch (expr->op.type) {
 		case TokenType::PLUS:
 		case TokenType::MINUS:
 		case TokenType::STAR:
 		case TokenType::SLASH:
-			if (std::ranges::find(num_types, lhs_type.type) == num_types.end() ||
-				std::ranges::find(num_types, rhs_type.type) == num_types.end()) {
-				semantic_error(expr->op, "Incorrect type. Must be an number.");
-				return;
+			if (std::ranges::find(num_types, lhs_con->type) == num_types.end()) {
+				semantic_error(expr->op, "Incorrect type. LHS must be a number.");
+			}
+			if (std::ranges::find(num_types, rhs_con->type) == num_types.end()) {
+				semantic_error(expr->op, "Incorrect type. RHS must be a number.");
 			}
 			return;
 		case TokenType::GREATER:
 		case TokenType::GREATER_EQUAL:
 		case TokenType::LESS:
 		case TokenType::LESS_EQUAL:
-			if (std::ranges::find(num_types, lhs_type.type) != num_types.end() ||
-				std::ranges::find(num_types, rhs_type.type) != num_types.end()) {
-				semantic_error(expr->op, "Incorrect type. Must be a bool or number.");
-				return;
+			if (std::ranges::find(num_types, lhs_con->type) == num_types.end()) {
+				semantic_error(expr->op, "Incorrect type. LHS must be a number.");
+			}
+			if (std::ranges::find(num_types, rhs_con->type) == num_types.end()) {
+				semantic_error(expr->op, "Incorrect type. RHS must be a number.");
 			}
 			return;
 		case TokenType::NOT_EQUAL:
 		case TokenType::EQUAL_EQUAL:
-			if (std::ranges::find(num_types, lhs_type.type) != num_types.end() ||
-				lhs_type != types.at(TypeEnum::BOOL)) {
-				semantic_error(expr->op, "Incorrect type. Must be a bool or number.");
-				return;
+			if (std::ranges::find(num_types, lhs_con->type) == num_types.end() &&
+				lhs_con != types.at(TypeEnum::BOOL)) {
+				semantic_error(expr->op, "Incorrect type. LHS must be a bool or number.");
+			}
+			if (std::ranges::find(num_types, rhs_con->type) == num_types.end() &&
+				*rhs_con != types.at(TypeEnum::BOOL)) {
+				semantic_error(expr->op, "Incorrect type. RHS must be a bool or number.");
 			}
 			return;
 		case TokenType::AND:
 		case TokenType::OR:
-			if (lhs_type != types.at(TypeEnum::BOOL) ||
-				rhs_type != types.at(TypeEnum::BOOL)) {
-				semantic_error(expr->op, "Incorrect type. Must be a bool.");
-				return;
+			if (*lhs_con != types.at(TypeEnum::BOOL)) {
+				semantic_error(expr->op, "Incorrect type. LHS must be a bool.");
+			}
+			if (*rhs_con != types.at(TypeEnum::BOOL)) {
+				semantic_error(expr->op, "Incorrect type. RHS must be a bool.");
 			}
 			return;
 		case TokenType::EQUAL: {
 			if (!expr->sides.first->lvalue) {
 				semantic_error(expr->op, "LHS must be a lvalue.");
-				return;
-			}
-
-			if (lhs_type != rhs_type) {
-				semantic_error(expr->op, "Incorrect type. RHS must equal LHS.");
 				return;
 			}
 

@@ -123,7 +123,7 @@ struct ASMValRegister : public ASMValHolder {
 			"STACK", "BASE", "INSTRUCTION",
 			"RETADDRESS"
 		};
-		os << "% (sz" << std::to_string(reg_size) << ")" << reg_strs[(size_t)reg->name];
+		os << "%(sz " << std::to_string(reg_size) << ' ' << reg_strs[(size_t)reg->name] << ')';
 		if (offset.has_value()) os << "-" << offset.value();
 	}
 };
@@ -191,9 +191,9 @@ struct IRCommand {
 
 inline std::ostream& operator<<(std::ostream& os, const IRCommand& cmd) noexcept {
 	static std::vector<std::string> cmd_strs{
-		"MOVE", "ADD", "SUB", "MULT", "DIV", "NEG", "XOR", "CALL",
-		"RET", "FUNC", "SET_ARG", "ENTER_STACK", "EXIT_STACK",
-		"LABEL", "PUSH", "POP", "LEA", "DIRECTIVE", "STORE",
+		"MOVE", "ADD", "SUB", "MULT", "DIV", "NEG", "XOR", "CALL", "RET",
+		"FUNC", "SET_ARG", "ENTER_STACK", "EXIT_STACK", "LABEL",
+		"PUSH", "POP", "LEA", "DIRECTIVE", "DECL_VAR", "SET_VAR",
 		"LOAD", "NOTHING", "ZERO"
 	};
 

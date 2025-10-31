@@ -2,16 +2,18 @@
 
 #include <utility>
 #include <memory>
-#include <variant>
 #include <iostream>
 #include "Types.h"
 
 struct Expression {
 	virtual ~Expression() = default;
 
-	virtual void print() { type->print(); }
+	virtual void print(std::ostream& os = std::cout) {
+		std::cout << (lvalue ? "lvalue" : "rvalue") << " expr type ";
+		type.print();
+    }
 
-	Type type{};
+	MixType type{};
 	bool lvalue{};
 };
 

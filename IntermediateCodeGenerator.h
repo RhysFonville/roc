@@ -1,9 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <ranges>
 #include <stack>
-#include <set>
 #include "Lexer.h"
 #include "Syntax.h"
 #include "Environment.h"
@@ -78,7 +76,7 @@ Register* occupy_reg(const RegisterName& name);
 Register* get_reg(const RegisterName& name, bool occupy = false);
 
 static std::shared_ptr<TConstructor> create_sz(TypeEnum t) {
-	return std::make_shared<TConstructor>(types.at(t));
+	return std::make_shared<TConstructor>(primitive_types.at(t));
 }
 
 struct ASMValHolder {
@@ -111,7 +109,7 @@ struct ASMValRegister : public ASMValHolder {
 	}
 
 	bool operator==(const ASMValRegister& reg) const noexcept {
-		return (comp_types(held_type, reg.held_type) && *this->reg == *reg.reg &&
+		return (cmp_types(held_type, reg.held_type) && *this->reg == *reg.reg &&
 				reg_size == reg.reg_size && offset == offset && dereferenced == reg.dereferenced);
 	}
 
@@ -147,13 +145,13 @@ struct ASMValNonRegister : public ASMValHolder {
 	}
 
 	bool operator==(const ASMValNonRegister& non) const noexcept {
-		return (comp_types(held_type, non.held_type) && value == non.value);
+		return (cmp_types(held_type, non.held_type) && value == non.value);
 	}
 };
 
 using ASMVal = std::shared_ptr<ASMValHolder>;
 
-static bool comp_asm_val(const ASMVal& lhs, const ASMVal& rhs) noexcept {
+static bool cmp_asm_val(const ASMVal& lhs, const ASMVal& rhs) noexcept {
 	if (auto lhs_reg{std::dynamic_pointer_cast<ASMValRegister>(lhs)}) {
 		if (auto rhs_reg{std::dynamic_pointer_cast<ASMValRegister>(rhs)}) {
 			return *lhs_reg == *rhs_reg;

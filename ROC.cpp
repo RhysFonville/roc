@@ -1,11 +1,11 @@
 #include <sstream>
 #include <ostream>
 #include "ROC.h"
-#include "ARM64CodeGenerator.h"
+//#include "ARM64CodeGenerator.h"
 #include "Parser.h"
 #include "TypeAnalyzer.h"
 #include "EnvironmentAnalyzer.h"
-#include "ASCodeGenerator.h"
+//#include "ASCodeGenerator.h"
 
 void ROC::run(const std::string& line) {
 	Lexer lexer{line};
@@ -31,7 +31,7 @@ void ROC::run(const std::string& line) {
 
 	std::cout << "Intermediate code generation completed.\n";
 
-	ASCodeGenerator as{cmds};
+	/*ASCodeGenerator as{cmds};
 	auto as_cmds{as.run()};
 
 	std::cout << "GAS code generation completed.\n";
@@ -40,7 +40,7 @@ void ROC::run(const std::string& line) {
 	for (auto cmd : as_cmds) {
 		out << cmd << '\n';
 	}
-	out.close();
+	out.close();*/
 }
 
 void ROC::run(const std::ifstream& file) {
@@ -83,7 +83,7 @@ void ROC::run(const std::ifstream& file) {
 	}
 	ir_out.close();
 
-	auto as{get_appropriate_code_generator(cmds)};
+	/*auto as{get_appropriate_code_generator(cmds)};
 	auto as_cmds{as->run()};
 
 	std::cout << "Machine specific code generation completed.\n";
@@ -92,10 +92,10 @@ void ROC::run(const std::ifstream& file) {
 	for (auto cmd : as_cmds) {
 		out << cmd << '\n';
 	}
-	out.close();
+	out.close();*/
 }
 
-std::shared_ptr<MachineSpecificCodeGenerator> ROC::get_appropriate_code_generator(const std::vector<IRCommand>& commands) {
+/*std::shared_ptr<MachineSpecificCodeGenerator> ROC::get_appropriate_code_generator(const std::vector<IRCommand>& commands) {
 #ifdef _WIN32
 #elif _WIN64
 #elif __APPLE__ || __MACH__
@@ -107,5 +107,5 @@ std::shared_ptr<MachineSpecificCodeGenerator> ROC::get_appropriate_code_generato
 	return std::make_shared<ASCodeGenerator>(commands);
 #else
 #endif
-}
+}*/
 

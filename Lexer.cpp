@@ -126,7 +126,7 @@ void Lexer::number(bool negative) {
 	std::vector<TokenType> types{
 		  number_types
 		| std::views::values
-		| std::views::transform([](const RealType& t) { return t.keyword.second; })
+		| std::views::transform([](const PrimitiveType& t) { return t.keyword.second; })
 		| std::ranges::to<std::vector>()
 	};
 	if (std::ranges::find(types, tokens.back().type) == types.end()) {

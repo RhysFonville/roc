@@ -85,12 +85,12 @@ clean: CMakeFiles/roc.dir/clean
 CMakeFiles/roc.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11 "Built target roc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Built target roc"
 .PHONY : CMakeFiles/roc.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/roc.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/rhys/progs/roc/CMakeFiles 11
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/rhys/progs/roc/CMakeFiles 8
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/roc.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/rhys/progs/roc/CMakeFiles 0
 .PHONY : CMakeFiles/roc.dir/rule
@@ -102,7 +102,7 @@ roc: CMakeFiles/roc.dir/rule
 # codegen rule for target.
 CMakeFiles/roc.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11 "Finished codegen for target roc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/rhys/progs/roc/CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Finished codegen for target roc"
 .PHONY : CMakeFiles/roc.dir/codegen
 
 # clean rule for target.

@@ -278,8 +278,10 @@ ASMVal IntermediateCodeGenerator::binary_expression(const std::shared_ptr<Binary
 						else return x;
 					}};
 					std::string asm_val{std::to_string(execute_op(
-						lhs_non->held_type->is_signed() ? (long long)std::stoll(lhs_non->value) : (unsigned long long)std::stoull(lhs_non->value),
-						rhs_non->held_type->is_signed() ? (long long)std::stoll(rhs_non->value) : (unsigned long long)std::stoull(rhs_non->value),
+						(long long)std::stoll(lhs_non->value),
+						(long long)std::stoll(rhs_non->value),
+						//lhs_non->held_type->is_signed() ? (long long)std::stoll(lhs_non->value) : (unsigned long long)std::stoull(lhs_non->value),
+						//rhs_non->held_type->is_signed() ? (long long)std::stoll(rhs_non->value) : (unsigned long long)std::stoull(rhs_non->value),
 						expr->op.type
 					))};
 					unoccupy_if_reg(rhs);

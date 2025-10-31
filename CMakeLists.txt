@@ -7,7 +7,9 @@ set(CMAKE_BUILD_TYPE DEBUG)
 add_executable(
 	roc
 	main.cpp ROC.cpp
-	ARM64CodeGenerator.cpp ASCodeGenerator.cpp MachineSpecificCodeGenerator.cpp IntermediateCodeGenerator.cpp
-	EnvironmentAnalyzer.cpp TypeAnalyzer.cpp
-	Parser.cpp Lexer.cpp
+	Lexer.cpp
+	Parser.cpp 
+	TypeAnalyzer.cpp EnvironmentAnalyzer.cpp
+	IntermediateCodeGenerator.cpp
+	#ARM64CodeGenerator.cpp ASCodeGenerator.cpp MachineSpecificCodeGenerator.cpp 
 )

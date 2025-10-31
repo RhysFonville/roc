@@ -1,12 +1,10 @@
 #pragma once
 
 #include <string>
-#include <variant>
 #include <vector>
 #include <ostream>
 #include <map>
 #include <ranges>
-#include <memory>
 
 enum class TokenType {
 	// Standard operators.
@@ -25,7 +23,7 @@ enum class TokenType {
 	IDENTIFIER, STRING_LITERAL, NUMBER_LITERAL, CHAR_LITERAL,
 	TRUE, FALSE,
 
-	// Type keywords.
+	// Primitive type keywords.
 	U8, U16, U32, U64, I8, I16,
 	I32, I64, BOOL, NONE, AUTO,
 
@@ -65,60 +63,6 @@ static const std::vector<TokenType> literal_tokens{
 	TokenType::TRUE, TokenType::FALSE
 };
 
-enum class TypeEnum {
-	I8, I16, I32, I64, U8, U16, U32, U64, BOOL, NONE
-};
-
-class RealType {
-public:
-	RealType() { }
-	RealType(std::pair<std::string, TokenType> keyword, uint8_t size)
-		: keyword{keyword}, size{size} { }
-
-	bool operator==(const RealType& type) const {
-		return keyword == type.keyword && size == type.size && is_signed == type.is_signed;
-	}
-	bool operator!=(const RealType& type) const { return !(*this == type); }
-	friend inline std::ostream& operator<<(std::ostream& os, const RealType& type);
-
-	std::pair<std::string, TokenType> keyword{};
-	uint8_t size{};
-	bool is_signed{};
-};
-
-inline std::ostream& operator<<(std::ostream& os, const RealType& type) {
-	os << type.keyword.first;
-	return os;
-}
-
-static const std::map<TypeEnum, RealType> types{
-	{TypeEnum::I8, {*keywords.find("i8"), sizeof(int8_t)}},
-	{TypeEnum::I16, {*keywords.find("i16"), sizeof(int16_t)}},
-	{TypeEnum::I32, {*keywords.find("i32"), sizeof(int32_t)}},
-	{TypeEnum::I64, {*keywords.find("i64"), sizeof(int64_t)}},
-	{TypeEnum::U8, {*keywords.find("u8"), sizeof(uint8_t)}},
-	{TypeEnum::U16, {*keywords.find("u16"), sizeof(uint16_t)}},
-	{TypeEnum::U32, {*keywords.find("u32"), sizeof(uint32_t)}},
-	{TypeEnum::U64, {*keywords.find("u64"), sizeof(uint64_t)}},
-	{TypeEnum::BOOL, {*keywords.find("bool"), sizeof(int8_t)}},
-	{TypeEnum::NONE, {*keywords.find("none"), 0u}}
-};
-
-static const std::map<TypeEnum, RealType> number_types{
-	*types.find(TypeEnum::I8), *types.find(TypeEnum::I16),
-	*types.find(TypeEnum::I32), *types.find(TypeEnum::I64),
-	*types.find(TypeEnum::U8), *types.find(TypeEnum::U16),
-	*types.find(TypeEnum::U32), *types.find(TypeEnum::U64)
-};
-
-static std::vector<TokenType> type_tokens() {
-	std::vector<TokenType> t{types | std::views::values | std::views::transform([](const auto& type) {
-		return type.keyword.second;
-	}) | std::ranges::to<std::vector>()};
-	t.insert(t.end(), TokenType::AUTO);
-	return t;
-}
-
 struct Token {
 	std::string value{};
 	TokenType type{};
@@ -131,13 +75,6 @@ struct Token {
 inline std::ostream& operator<<(std::ostream& os, const Token& tok) {
 	os << std::to_string((int)tok.type) + ": " + tok.value + " (line " + std::to_string(tok.line) + ")";
 	return os;
-}
-
-static std::optional<RealType> token_to_type(const Token& token) {
-	for (const RealType& type : types | std::views::values) {
-		if (type.keyword.second == token.type) return type;
-	}
-	return std::nullopt;
 }
 
 class Lexer {

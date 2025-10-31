@@ -1,6 +1,6 @@
-#include "Environment.h"
 #include "Syntax.h"
 #include "Types.h"
+#include "Environment.h"
 #include <memory>
 
 struct Constraint {
@@ -9,12 +9,12 @@ struct Constraint {
 
 struct CEquality : public Constraint {
 	CEquality() : Constraint{} { }
-	explicit CEquality(const Type& t1, const Type& t2) : Constraint{}, t1{t1}, t2{t2} { }
-	Type t1{};
-	Type t2{};
+	explicit CEquality(const TType_ptr& t1, const TType_ptr& t2) : Constraint{}, t1{t1}, t2{t2} { }
+	TType_ptr t1{};
+	TType_ptr t2{};
 };
 
-static bool is_inferred(const Type& t) {
+static bool is_inferred(const TType_ptr& t) {
 	if (std::dynamic_pointer_cast<TConstructor>(t) != nullptr) return true;
 	if (auto p{std::dynamic_pointer_cast<TPointer>(t)}) return is_inferred(p->inner);
 	return false;
@@ -30,23 +30,23 @@ public:
 private:
 	std::vector<std::shared_ptr<Statement>> stmts{};
 
-	std::vector<Type> substitution{};
+	std::vector<TType_ptr> substitution{};
 	std::vector<std::shared_ptr<Constraint>> type_constraints{};
 
 	bool success{true};
 
 	void type_error(const Token& token, const std::string& message);
 
-	Type fresh_type_variable() {
-		Type result{std::make_shared<TVariable>((int)substitution.size())};
+	TType_ptr fresh_type_variable() {
+		TType_ptr result{std::make_shared<TVariable>((int)substitution.size())};
 		substitution.push_back(result);
 		return substitution.back();
 	}
-	bool occurs_in(int index, const Type& type);
-	void unify(const Type& t1, const Type& t2);
+	bool occurs_in(int index, const TType_ptr& type);
+	void unify(const TType_ptr& t1, const TType_ptr& t2);
 
 	void solve_constraints();
-	Type substitute(const Type& type);
+	TType_ptr substitute(const TType_ptr& type);
 
 	void infer_expression(const std::shared_ptr<Expression>& expr);
 	void infer_identifier_expression(const std::shared_ptr<IdentifierExpression>& expr);

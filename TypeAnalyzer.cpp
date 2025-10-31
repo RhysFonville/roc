@@ -1,11 +1,8 @@
 #include <memory>
 #include <algorithm>
-#include <assert.h>
 #include "TypeAnalyzer.h"
 #include "ErrorHandling.h"
 #include "Lexer.h"
-#include "Syntax.h"
-#include "Types.h"
 
 TypeAnalyzer::TypeAnalyzer(const std::vector<std::shared_ptr<Statement>>& stmts) : stmts{stmts} { }
 
@@ -14,7 +11,7 @@ void TypeAnalyzer::type_error(const Token& token, const std::string& message) {
 	success = false;
 }
 
-void TypeAnalyzer::unify(const Type& t1, const Type& t2) {
+void TypeAnalyzer::unify(const TType_ptr& t1, const TType_ptr& t2) {
 	if (auto var1 = std::dynamic_pointer_cast<TVariable>(t1)) {
 		if (auto var2 = std::dynamic_pointer_cast<TVariable>(t2); var2 && var1->index == var2->index) {
 			return;
@@ -53,7 +50,7 @@ void TypeAnalyzer::unify(const Type& t1, const Type& t2) {
 	auto cons1 = std::dynamic_pointer_cast<TConstructor>(t1);
 	auto cons2 = std::dynamic_pointer_cast<TConstructor>(t2);
 	if (cons1 && cons2) {
-		if (cons1->type != cons2->type || cons1->generics.size() != cons2->generics.size()) {
+		if (cons1->type_id != cons2->type_id || cons1->generics.size() != cons2->generics.size()) {
 			//throw std::runtime_error("Type mismatch: " /*+ substitute(t1) + " vs. " + substitute(t2)*/);
 			return;
 		}
@@ -73,32 +70,32 @@ void TypeAnalyzer::unify(const Type& t1, const Type& t2) {
 	//throw std::runtime_error("Unification failed");
 }
 
-bool TypeAnalyzer::occurs_in(int index, const Type& t) {
+bool TypeAnalyzer::occurs_in(int index, const TType_ptr& t) {
 	if (auto var = std::dynamic_pointer_cast<TVariable>(t)) {
 		if (var->index < substitution.size() && substitution[var->index] != nullptr && substitution[var->index] != t) {
 			return occurs_in(index, substitution[var->index]);
 		}
 		return var->index == index;
 	} else if (auto cons = std::dynamic_pointer_cast<TConstructor>(t)) {
-		return std::ranges::any_of(cons->generics, [&](const Type& sub) { return occurs_in(index, sub); });
+		return std::ranges::any_of(cons->generics, [&](const TType_ptr& sub) { return occurs_in(index, sub); });
 	} else if (auto ptr = std::dynamic_pointer_cast<TPointer>(t)) {
         return occurs_in(index, ptr->inner);
     }
 	return false;
 }
 
-Type TypeAnalyzer::substitute(const Type& t) {
+TType_ptr TypeAnalyzer::substitute(const TType_ptr& t) {
 	if (auto var = std::dynamic_pointer_cast<TVariable>(t)) {
 		if (var->index < substitution.size() && substitution[var->index] != nullptr && substitution[var->index] != t) {
 			return substitute(substitution[var->index]);
 		}
 	} else if (auto cons = std::dynamic_pointer_cast<TConstructor>(t)) {
-		std::vector<Type> newGenerics;
+		std::vector<TType_ptr> newGenerics;
 		newGenerics.reserve(cons->generics.size());
 		for (const auto& sub : cons->generics) {
 			newGenerics.push_back(substitute(sub));
 		}
-		return std::make_shared<TConstructor>(TConstructor{cons->type, std::move(newGenerics)});
+		return std::make_shared<TConstructor>(TConstructor{cons->type_id, std::move(newGenerics)});
 	} else if (auto ptr = std::dynamic_pointer_cast<TPointer>(t)) {
         return std::make_shared<TPointer>(substitute(ptr->inner));
     }
@@ -162,7 +159,7 @@ void TypeAnalyzer::infer_literal_expression(const std::shared_ptr<LiteralExpress
 	switch (expr->value.type) {
 		case TokenType::TRUE:
 		case TokenType::FALSE:
-			expr->type = std::make_shared<TConstructor>(types.at(TypeEnum::BOOL));
+			expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::BOOL));
 			return;
 		case TokenType::NUMBER_LITERAL:
 			for (const auto& type : number_types | std::views::values) {
@@ -174,10 +171,10 @@ void TypeAnalyzer::infer_literal_expression(const std::shared_ptr<LiteralExpress
 			expr->type = fresh_type_variable();
 			return;
 		case TokenType::STRING_LITERAL:
-			expr->type = std::make_shared<TPointer>(std::make_shared<TConstructor>(types.at(TypeEnum::I8)));
+			expr->type = std::make_shared<TPointer>(std::make_shared<TConstructor>(primitive_types.at(TypeEnum::I8)));
 			return;
 		case TokenType::CHAR_LITERAL:
-			expr->type = std::make_shared<TConstructor>(types.at(TypeEnum::I8));
+			expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::I8));
 			return;
 		default:
 			expr->type = nullptr;
@@ -195,14 +192,14 @@ void TypeAnalyzer::infer_unary_expression(const std::shared_ptr<UnaryExpression>
 	infer_expression(expr->expr);
 	switch (expr->op.type) {
 		case TokenType::NOT:
-			expr->type = std::make_shared<TConstructor>(types.at(TypeEnum::BOOL));
+			expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::BOOL));
 			return;
 		case TokenType::MINUS:
 			expr->type = expr->expr->type;
 			return;
 		case TokenType::STAR:
-			if (is_pointer(expr->expr->type)) {
-				expr->type = std::dynamic_pointer_cast<TPointer>(expr->expr->type)->inner;
+			if (is_pointer(expr->expr->type.get_ttype_ptr())) {
+				expr->type = std::dynamic_pointer_cast<TPointer>(expr->expr->type.get_ttype_ptr())->inner;
 			} else {
 				expr->type = fresh_type_variable();
 				type_constraints.push_back(std::make_shared<CEquality>(expr->expr->type, std::make_shared<TPointer>(expr->type)));
@@ -238,11 +235,11 @@ void TypeAnalyzer::infer_binary_expression(const std::shared_ptr<BinaryExpressio
 		case TokenType::LESS:
 		case TokenType::LESS_EQUAL:
 		case TokenType::EQUAL:
-			expr->type = std::make_shared<TConstructor>(types.at(TypeEnum::BOOL));
+			expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::BOOL));
 			break;
 		case TokenType::AND:
 		case TokenType::OR:
-			expr->type = std::make_shared<TConstructor>(types.at(TypeEnum::BOOL));
+			expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::BOOL));
 			type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->sides.first->type));
 			type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->sides.second->type));
 			break;
@@ -274,7 +271,7 @@ void TypeAnalyzer::infer_block_expression(const std::shared_ptr<BlockExpression>
 	}
 
 	if (rets.empty()) {
-		expr->type = std::make_shared<TConstructor>(types.at(TypeEnum::NONE));
+		expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::NONE));
 	} else {
 		for (auto& ret : rets) {
 			type_constraints.push_back(std::make_shared<CEquality>(expr->type, rets[0].type));
@@ -356,7 +353,7 @@ void TypeAnalyzer::infer_function_declaration_statement(const std::shared_ptr<Fu
 
 	type_constraints.push_back(std::make_shared<CEquality>(stmt->return_type, stmt->block->type));
 
-	std::vector<Variable> params{(stmt->params | std::views::transform([](const std::pair<Type, Token>& param) {
+	std::vector<Variable> params{(stmt->params | std::views::transform([](const std::pair<TType_ptr, Token>& param) {
 		return Variable{param.first, param.second};
 	})) | std::ranges::to<std::vector>()};
 
@@ -397,7 +394,7 @@ void TypeAnalyzer::substitute_literal_expression(const std::shared_ptr<LiteralEx
 	expr->type = substitute(expr->type);
 
 	/*if (expr->value.type == TokenType::NUMBER_LITERAL && std::dynamic_pointer_cast<TVariable>(expr->type)) {
-		expr->type = std::make_shared<TConstructor>(types.at(TypeEnum::I32));
+		expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::I32));
 	}*/
 
 	if (!is_inferred(expr->type)) {

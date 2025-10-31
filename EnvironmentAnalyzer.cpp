@@ -71,7 +71,7 @@ void EnvironmentAnalyzer::grouping_expression(const std::shared_ptr<GroupingExpr
 void EnvironmentAnalyzer::unary_expression(const std::shared_ptr<UnaryExpression>& expr) {
 	check_expression(expr->expr);
 
-	std::vector<RealType> num_types{
+	std::vector<PrimitiveType> num_types{
 		number_types
 		| std::views::values
 		| std::ranges::to<std::vector>()
@@ -84,7 +84,7 @@ void EnvironmentAnalyzer::unary_expression(const std::shared_ptr<UnaryExpression
 			if (is_pointer(expr->expr->type)) {
 				semantic_error(expr->op, "Incorrect type. Cannot be a pointer.");
 			}
-			if (*expr_con != types.at(TypeEnum::BOOL)) {
+			if (expr_con->type != primitive_types.at(TypeEnum::BOOL)) {
 				semantic_error(expr->op, "Incorrect type. Must be a bool."); 
 			}
 			break;
@@ -100,7 +100,7 @@ void EnvironmentAnalyzer::unary_expression(const std::shared_ptr<UnaryExpression
 			if (auto lit{std::dynamic_pointer_cast<LiteralExpression>(expr->expr)}) {
 				semantic_error(lit->value, "Cannot dereference literal.");
 			}
-			if (*expr_con == types.at(TypeEnum::NONE)) {
+			if (expr_con->type == primitive_types.at(TypeEnum::NONE)) {
 				semantic_error(expr->op, "Incorrect type. Cannot dereference a none type.");
 			}
 			break;
@@ -120,13 +120,13 @@ void EnvironmentAnalyzer::binary_expression(const std::shared_ptr<BinaryExpressi
 	check_expression(expr->sides.first);
 	check_expression(expr->sides.second);
 
-	std::vector<RealType> num_types{
+	std::vector<PrimitiveType> num_types{
 		number_types
 		| std::views::values
 		| std::ranges::to<std::vector>()
 	};
 
-	if (!comp_types(expr->sides.first->type, expr->sides.second->type)) {
+	if (!cmp_types(expr->sides.first->type, expr->sides.second->type)) {
 		semantic_error(expr->op, "Mismatched types in binary expression.");
 		return;
 	}
@@ -160,20 +160,20 @@ void EnvironmentAnalyzer::binary_expression(const std::shared_ptr<BinaryExpressi
 		case TokenType::NOT_EQUAL:
 		case TokenType::EQUAL_EQUAL:
 			if (std::ranges::find(num_types, lhs_con->type) == num_types.end() &&
-				lhs_con != types.at(TypeEnum::BOOL)) {
+				lhs_con->type != primitive_types.at(TypeEnum::BOOL)) {
 				semantic_error(expr->op, "Incorrect type. LHS must be a bool or number.");
 			}
 			if (std::ranges::find(num_types, rhs_con->type) == num_types.end() &&
-				*rhs_con != types.at(TypeEnum::BOOL)) {
+				rhs_con->type != primitive_types.at(TypeEnum::BOOL)) {
 				semantic_error(expr->op, "Incorrect type. RHS must be a bool or number.");
 			}
 			return;
 		case TokenType::AND:
 		case TokenType::OR:
-			if (*lhs_con != types.at(TypeEnum::BOOL)) {
+			if (lhs_con->type != types.at(TypeEnum::BOOL)) {
 				semantic_error(expr->op, "Incorrect type. LHS must be a bool.");
 			}
-			if (*rhs_con != types.at(TypeEnum::BOOL)) {
+			if (rhs_con->type != types.at(TypeEnum::BOOL)) {
 				semantic_error(expr->op, "Incorrect type. RHS must be a bool.");
 			}
 			return;
@@ -228,7 +228,7 @@ void EnvironmentAnalyzer::call_expression(const std::shared_ptr<CallExpression>&
 	for (int i = 0; i < std::min({expr->args.size(), func.args.size()}); i++) {
 		check_expression(expr->args[i]);
 
-		if (!comp_types(expr->args[i]->type, func.args[i].type)) {
+		if (!cmp_types(expr->args[i]->type, func.args[i].type)) {
 			semantic_error(expr->closing_paren, "Mismatched types between argument and parameter.");
 	  	}
 	}
@@ -260,11 +260,11 @@ void EnvironmentAnalyzer::variable_declaration_statement(const std::shared_ptr<V
 	}
 	check_expression(stmt->initializer);
 
-	if (comp_types(stmt->type, std::make_shared<TConstructor>(types.at(TypeEnum::NONE)))) {
+	if (cmp_types(stmt->type, std::make_shared<TConstructor>(primitive_types.at(TypeEnum::NONE)))) {
 		semantic_error(stmt->identifier->identifier, "Cannot declare variable of type none.");
 		return;
 	}
-	if (!comp_types(stmt->initializer->type, stmt->type)) {
+	if (!cmp_types(stmt->initializer->type, stmt->type)) {
 		semantic_error(stmt->identifier->identifier, "Incorrect type.");
 		return;
 	}
@@ -288,7 +288,7 @@ void EnvironmentAnalyzer::function_declaration_statement(const std::shared_ptr<F
 
 	env_stack = env_stack_copy;
 
-	if (!comp_types(stmt->block->type, stmt->return_type)) {
+	if (!cmp_types(stmt->block->type, stmt->return_type)) {
 		semantic_error(stmt->identifier->identifier, "Block is not the same type as specified function return type.");
 	}
 

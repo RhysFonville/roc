@@ -249,7 +249,7 @@ std::shared_ptr<Expression> Parser::return_expression() {
 
 std::shared_ptr<Statement> Parser::statement() {
 	if (match({TokenType::SEMICOLON})) { return nullptr; }
-	if (match(type_tokens())) {
+	if (match(primitive_type_tokens())) {
 		return declaration(type(true));
 	}
 	return expression_statement();
@@ -322,7 +322,7 @@ Type Parser::type(bool get_previous) {
 			ret = nullptr;
 		}
 	} else {
-		if (auto t{token_to_type(consume(type_tokens(), "Expected a type specifier."))})
+		if (auto t{token_to_type(consume(primitive_type_tokens(), "Expected a type specifier."))})
 			ret = std::make_shared<TConstructor>(t.value());
 		else
 			ret = nullptr;

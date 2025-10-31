@@ -136,54 +136,6 @@ roc/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/build
 .PHONY : roc/fast
 
-ARM64CodeGenerator.o: ARM64CodeGenerator.cpp.o
-.PHONY : ARM64CodeGenerator.o
-
-# target to build an object file
-ARM64CodeGenerator.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.o
-.PHONY : ARM64CodeGenerator.cpp.o
-
-ARM64CodeGenerator.i: ARM64CodeGenerator.cpp.i
-.PHONY : ARM64CodeGenerator.i
-
-# target to preprocess a source file
-ARM64CodeGenerator.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.i
-.PHONY : ARM64CodeGenerator.cpp.i
-
-ARM64CodeGenerator.s: ARM64CodeGenerator.cpp.s
-.PHONY : ARM64CodeGenerator.s
-
-# target to generate assembly for a file
-ARM64CodeGenerator.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/ARM64CodeGenerator.cpp.s
-.PHONY : ARM64CodeGenerator.cpp.s
-
-ASCodeGenerator.o: ASCodeGenerator.cpp.o
-.PHONY : ASCodeGenerator.o
-
-# target to build an object file
-ASCodeGenerator.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/ASCodeGenerator.cpp.o
-.PHONY : ASCodeGenerator.cpp.o
-
-ASCodeGenerator.i: ASCodeGenerator.cpp.i
-.PHONY : ASCodeGenerator.i
-
-# target to preprocess a source file
-ASCodeGenerator.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/ASCodeGenerator.cpp.i
-.PHONY : ASCodeGenerator.cpp.i
-
-ASCodeGenerator.s: ASCodeGenerator.cpp.s
-.PHONY : ASCodeGenerator.s
-
-# target to generate assembly for a file
-ASCodeGenerator.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/ASCodeGenerator.cpp.s
-.PHONY : ASCodeGenerator.cpp.s
-
 EnvironmentAnalyzer.o: EnvironmentAnalyzer.cpp.o
 .PHONY : EnvironmentAnalyzer.o
 
@@ -255,30 +207,6 @@ Lexer.s: Lexer.cpp.s
 Lexer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/Lexer.cpp.s
 .PHONY : Lexer.cpp.s
-
-MachineSpecificCodeGenerator.o: MachineSpecificCodeGenerator.cpp.o
-.PHONY : MachineSpecificCodeGenerator.o
-
-# target to build an object file
-MachineSpecificCodeGenerator.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.o
-.PHONY : MachineSpecificCodeGenerator.cpp.o
-
-MachineSpecificCodeGenerator.i: MachineSpecificCodeGenerator.cpp.i
-.PHONY : MachineSpecificCodeGenerator.i
-
-# target to preprocess a source file
-MachineSpecificCodeGenerator.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.i
-.PHONY : MachineSpecificCodeGenerator.cpp.i
-
-MachineSpecificCodeGenerator.s: MachineSpecificCodeGenerator.cpp.s
-.PHONY : MachineSpecificCodeGenerator.s
-
-# target to generate assembly for a file
-MachineSpecificCodeGenerator.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/roc.dir/build.make CMakeFiles/roc.dir/MachineSpecificCodeGenerator.cpp.s
-.PHONY : MachineSpecificCodeGenerator.cpp.s
 
 Parser.o: Parser.cpp.o
 .PHONY : Parser.o
@@ -386,12 +314,6 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... roc"
-	@echo "... ARM64CodeGenerator.o"
-	@echo "... ARM64CodeGenerator.i"
-	@echo "... ARM64CodeGenerator.s"
-	@echo "... ASCodeGenerator.o"
-	@echo "... ASCodeGenerator.i"
-	@echo "... ASCodeGenerator.s"
 	@echo "... EnvironmentAnalyzer.o"
 	@echo "... EnvironmentAnalyzer.i"
 	@echo "... EnvironmentAnalyzer.s"
@@ -401,9 +323,6 @@ help:
 	@echo "... Lexer.o"
 	@echo "... Lexer.i"
 	@echo "... Lexer.s"
-	@echo "... MachineSpecificCodeGenerator.o"
-	@echo "... MachineSpecificCodeGenerator.i"
-	@echo "... MachineSpecificCodeGenerator.s"
 	@echo "... Parser.o"
 	@echo "... Parser.i"
 	@echo "... Parser.s"

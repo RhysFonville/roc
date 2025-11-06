@@ -24,14 +24,6 @@ private:
 
 	bool successful{true};
 
-	static std::optional<TConstructor> con(const Type& type) noexcept {
-		if (auto c{std::dynamic_pointer_cast<TConstructor>(type)}) {
-			return *c;
-		} else {
-			return std::nullopt;
-		}
-	}
-
 	void semantic_error(const Token& token, const std::string& message);
 
 	void check_expression(const std::shared_ptr<Expression>& expr);

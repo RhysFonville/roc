@@ -91,28 +91,18 @@ statement
 	| function_declaration
 	| expression_statement
 
-declaration
-	: type IDENTIFIER variabile_declaration
-	| type IDENTIFIER function_declaration
-
 variable_declaration
-	: '=' primary_expression ';'
+	: 'let' IDENTIFIER (':' type) '=' primary_expression ';'
 
 function_declaration
-	: '(' parameters? ')' block_expression
+	: 'let' IDENTIFIER '(' parameters? ')' (';' type) block_expression
 
 parameters
-	: type IDENTIFIER (',' type_specifier IDENTIFIER)*
+	:  (type ':')? IDENTIFIER (',' type_specifier IDENTIFIER)*
 
 type
 	: TYPE_SPECIFIER pointer*
 
-TYPE_SPECIFIER
-	| 'int'
-	| 'bool'
-	| 'str'
-	| 'none'
-
 expression_statement
-	| expression ';'
+	: expression ';'
 

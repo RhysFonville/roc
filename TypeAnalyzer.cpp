@@ -1,8 +1,10 @@
 #include <memory>
 #include <algorithm>
+#include <variant>
 #include "TypeAnalyzer.h"
 #include "ErrorHandling.h"
 #include "Lexer.h"
+#include "Types.h"
 
 TypeAnalyzer::TypeAnalyzer(const std::vector<std::shared_ptr<Statement>>& stmts) : stmts{stmts} { }
 
@@ -102,6 +104,40 @@ TType_ptr TypeAnalyzer::substitute(const TType_ptr& t) {
 	return t;
 }
 
+void TypeAnalyzer::resolve_parse_type(MixType& type) {
+	if (type.get_parse_type().type.has_value()) {
+		if (std::holds_alternative<Token>(type.get_parse_type().type.value())) {
+			auto env_type{env_stack.get_identifier_type(std::get<Token>(type.get_parse_type().type.value()))};
+			if (env_type.has_value()) {
+				type.get_ttype_ptr() = std::make_shared<TConstructor>(env_type->get_type_index().value());
+			}
+		}
+	} else {
+		type.get_ttype_ptr() = nullptr;
+	}
+}
+
+void TypeAnalyzer::translate_ttype_ptr(MixType& type) {
+	std::vector<TType_ptr> ptr_types{type.get_ttype_ptr()};
+
+	if (ptr_types[0] == nullptr) {
+		type.get_type() = Type{};
+		return;
+	}
+
+	while (auto ptr{std::dynamic_pointer_cast<TPointer>(ptr_types.back())}) {
+		ptr_types.push_back(ptr->inner);
+	}
+
+	auto base_type{std::dynamic_pointer_cast<TConstructor>(ptr_types.back())};
+	type.get_type() = Type{base_type->type_id, type->
+	ptr_types.pop_back();
+
+	for (const TType_ptr& ptr : ptr_types) {
+
+	}
+}
+
 void TypeAnalyzer::solve_constraints() {
 	for (auto constraint : type_constraints) {
 		if (auto eq{std::dynamic_pointer_cast<CEquality>(constraint)}) {
@@ -143,7 +179,7 @@ void TypeAnalyzer::infer_expression(const std::shared_ptr<Expression>& expr) {
 	} else if (auto cast{std::dynamic_pointer_cast<CastExpression>(expr)}) {
 		infer_cast_expression(cast);
 	} else {
-		expr->type = nullptr;
+		expr->type.get_ttype_ptr() = nullptr;
 	}
 }
 
@@ -159,25 +195,25 @@ void TypeAnalyzer::infer_literal_expression(const std::shared_ptr<LiteralExpress
 	switch (expr->value.type) {
 		case TokenType::TRUE:
 		case TokenType::FALSE:
-			expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::BOOL));
+			expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::BOOL).type_id);
 			return;
 		case TokenType::NUMBER_LITERAL:
 			for (const auto& type : number_types | std::views::values) {
-				if (expr->value.value.ends_with(type.keyword.first)) {
-					expr->type = std::make_shared<TConstructor>(type);
+				if (expr->value.value.ends_with(type.name)) {
+					expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(type.type_id);
 					return;
 				}
 			}
 			expr->type = fresh_type_variable();
 			return;
 		case TokenType::STRING_LITERAL:
-			expr->type = std::make_shared<TPointer>(std::make_shared<TConstructor>(primitive_types.at(TypeEnum::I8)));
+			expr->type.get_ttype_ptr() = std::make_shared<TPointer>(std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::I8).type_id));
 			return;
 		case TokenType::CHAR_LITERAL:
-			expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::I8));
+			expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::I8).type_id);
 			return;
 		default:
-			expr->type = nullptr;
+			expr->type.get_ttype_ptr() = nullptr;
 			return;
 	}
 }
@@ -192,21 +228,21 @@ void TypeAnalyzer::infer_unary_expression(const std::shared_ptr<UnaryExpression>
 	infer_expression(expr->expr);
 	switch (expr->op.type) {
 		case TokenType::NOT:
-			expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::BOOL));
+			expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::BOOL).type_id);
 			return;
 		case TokenType::MINUS:
-			expr->type = expr->expr->type;
+			expr->type.get_ttype_ptr() = expr->expr->type.get_ttype_ptr();
 			return;
 		case TokenType::STAR:
 			if (is_pointer(expr->expr->type.get_ttype_ptr())) {
-				expr->type = std::dynamic_pointer_cast<TPointer>(expr->expr->type.get_ttype_ptr())->inner;
+				expr->type.get_ttype_ptr() = std::dynamic_pointer_cast<TPointer>(expr->expr->type.get_ttype_ptr())->inner;
 			} else {
 				expr->type = fresh_type_variable();
 				type_constraints.push_back(std::make_shared<CEquality>(expr->expr->type, std::make_shared<TPointer>(expr->type)));
 			}
 			return;
 		case TokenType::AMPERSAND:
-			expr->type = std::make_shared<TPointer>(expr->expr->type);
+			expr->type.get_ttype_ptr() = std::make_shared<TPointer>(expr->expr->type.get_ttype_ptr());
 			return;
 		default:
 			type_error(expr->op, "Invalid unary operation.");
@@ -235,11 +271,11 @@ void TypeAnalyzer::infer_binary_expression(const std::shared_ptr<BinaryExpressio
 		case TokenType::LESS:
 		case TokenType::LESS_EQUAL:
 		case TokenType::EQUAL:
-			expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::BOOL));
+			expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::BOOL).type_id);
 			break;
 		case TokenType::AND:
 		case TokenType::OR:
-			expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::BOOL));
+			expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::BOOL).type_id);
 			type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->sides.first->type));
 			type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->sides.second->type));
 			break;
@@ -253,7 +289,8 @@ void TypeAnalyzer::infer_block_expression(const std::shared_ptr<BlockExpression>
 
 	if (func != nullptr) {
 		for (const auto& param : func->params) {
-			env_stack.back().variables.insert(Variable{param.first, param.second});
+			resolve_parse_type(param.first->parse_type);
+			env_stack.back().variables.insert(Variable{param.first->parse_type, param.second});
 		}
 	}
 
@@ -271,7 +308,7 @@ void TypeAnalyzer::infer_block_expression(const std::shared_ptr<BlockExpression>
 	}
 
 	if (rets.empty()) {
-		expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::NONE));
+		expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::NONE).type_id);
 	} else {
 		for (auto& ret : rets) {
 			type_constraints.push_back(std::make_shared<CEquality>(expr->type, rets[0].type));
@@ -304,7 +341,13 @@ void TypeAnalyzer::infer_return_expression(const std::shared_ptr<ReturnExpressio
 
 void TypeAnalyzer::infer_cast_expression(const std::shared_ptr<CastExpression>& expr) {
 	infer_expression(expr->expr);
-	expr->type = expr->cast_type;
+	infer_type_expression(expr->cast_type);
+	expr->type = expr->cast_type->type;
+}
+
+void TypeAnalyzer::infer_type_expression(const std::shared_ptr<TypeExpression>& expr) {
+	resolve_parse_type(expr->parse_type);
+	expr->type = expr->parse_type;
 }
 
 void TypeAnalyzer::infer_statement(const std::shared_ptr<Statement>& stmt) {
@@ -322,25 +365,28 @@ void TypeAnalyzer::infer_expression_statement(const std::shared_ptr<ExpressionSt
 }
 
 void TypeAnalyzer::infer_variable_declaration_statement(const std::shared_ptr<VariableDeclarationStatement>& stmt) {
+	infer_type_expression(stmt->type);
 	if (stmt->type == nullptr) {
-		stmt->type = fresh_type_variable();
+		stmt->type->type.get_ttype_ptr() = fresh_type_variable();
 	}
 
 	infer_expression(stmt->initializer);
 
 	type_constraints.push_back(std::make_shared<CEquality>(stmt->type, stmt->initializer->type));
 
-	env_stack.back().variables.insert(Variable{stmt->type, stmt->identifier->identifier});
+	env_stack.back().variables.insert(Variable{stmt->type->type, stmt->identifier->identifier});
 }
 
 void TypeAnalyzer::infer_function_declaration_statement(const std::shared_ptr<FunctionDeclarationStatement>& stmt) {
+	infer_type_expression(stmt->return_type);
 	if (stmt->return_type == nullptr) {
-		stmt->return_type = fresh_type_variable();
+		stmt->return_type->type = fresh_type_variable();
 	}
 
 	for (auto& param : stmt->params) {
+		infer_type_expression(param.first);
 		if (param.first == nullptr) {
-			param.first = fresh_type_variable();
+			param.first->type = fresh_type_variable();
 		}
 	}
 
@@ -353,11 +399,12 @@ void TypeAnalyzer::infer_function_declaration_statement(const std::shared_ptr<Fu
 
 	type_constraints.push_back(std::make_shared<CEquality>(stmt->return_type, stmt->block->type));
 
-	std::vector<Variable> params{(stmt->params | std::views::transform([](const std::pair<TType_ptr, Token>& param) {
-		return Variable{param.first, param.second};
+	std::vector<Variable> params{(stmt->params | std::views::transform([&](const std::pair<std::shared_ptr<TypeExpression>, Token>& param) {
+		infer_type_expression(param.first);
+		return Variable{param.first->type, param.second};
 	})) | std::ranges::to<std::vector>()};
 
-	env_stack.back().functions.insert(Function{stmt->return_type, stmt->identifier->identifier, params});
+	env_stack.back().functions.insert(Function{stmt->return_type->type, stmt->identifier->identifier, params});
 }
 
 void TypeAnalyzer::substitute_expression(const std::shared_ptr<Expression>& expr) {
@@ -383,35 +430,37 @@ void TypeAnalyzer::substitute_expression(const std::shared_ptr<Expression>& expr
 }
 
 void TypeAnalyzer::substitute_identifier_expression(const std::shared_ptr<IdentifierExpression>& expr) {
-	expr->type = substitute(expr->type);
+	expr->type = substitute(expr->type.get_ttype_ptr());
 
-	if (!is_inferred(expr->type)) {
+	if (!is_inferred(expr->type.get_ttype_ptr())) {
 		type_error(expr->identifier, "Unable to infer identifier type.");
 	}
+
+	expr->type
 }
 
 void TypeAnalyzer::substitute_literal_expression(const std::shared_ptr<LiteralExpression>& expr) {
-	expr->type = substitute(expr->type);
+	expr->type = substitute(expr->type.get_ttype_ptr());
 
 	/*if (expr->value.type == TokenType::NUMBER_LITERAL && std::dynamic_pointer_cast<TVariable>(expr->type)) {
 		expr->type = std::make_shared<TConstructor>(primitive_types.at(TypeEnum::I32));
 	}*/
 
-	if (!is_inferred(expr->type)) {
+	if (!is_inferred(expr->type.get_ttype_ptr())) {
 		type_error(expr->value, "Unable to infer literal type.");
 	}
 }
 
 void TypeAnalyzer::substitute_grouping_expression(const std::shared_ptr<GroupingExpression>& expr) {
 	substitute_expression(expr->expr);
-	expr->type = substitute(expr->type);
+	expr->type = substitute(expr->type.get_ttype_ptr());
 }
 
 void TypeAnalyzer::substitute_unary_expression(const std::shared_ptr<UnaryExpression>& expr) {
 	substitute_expression(expr->expr);
-	expr->type = substitute(expr->type);
+	expr->type = substitute(expr->type.get_ttype_ptr());
 
-	if (!is_inferred(expr->type)) {
+	if (!is_inferred(expr->type.get_ttype_ptr())) {
 		type_error(expr->op, "Unable to infer unary expression result type.");
 	}
 }
@@ -419,9 +468,9 @@ void TypeAnalyzer::substitute_unary_expression(const std::shared_ptr<UnaryExpres
 void TypeAnalyzer::substitute_binary_expression(const std::shared_ptr<BinaryExpression>& expr) {
 	substitute_expression(expr->sides.first);
 	substitute_expression(expr->sides.second);
-	expr->type = substitute(expr->type);
+	expr->type = substitute(expr->type.get_ttype_ptr());
 
-	if (!is_inferred(expr->type)) {
+	if (!is_inferred(expr->type.get_ttype_ptr())) {
 		type_error(expr->op, "Unable to infer binary expression result type.");
 	}
 }
@@ -442,40 +491,40 @@ void TypeAnalyzer::substitute_block_expression(const std::shared_ptr<BlockExpres
 		}
 	}
 
-	expr->type = substitute(expr->type);
+	expr->type = substitute(expr->type.get_ttype_ptr());
 
-	if (!is_inferred(expr->type)) {
+	if (!is_inferred(expr->type.get_ttype_ptr())) {
 		type_error(expr->opening_block, "Unable to infer block's type.");
 	}
 }
 
 void TypeAnalyzer::substitute_call_expression(const std::shared_ptr<CallExpression>& expr) {
-	expr->type = substitute(expr->type);
+	expr->type = substitute(expr->type.get_ttype_ptr());
 	for (auto& arg : expr->args) {
 		substitute_expression(arg);
 
-		if (!is_inferred(arg->type)) {
+		if (!is_inferred(arg->type.get_ttype_ptr())) {
 			type_error(expr->closing_paren, "Unable to infer function call argument type.");
 		}
 	}
 
-	if (!is_inferred(expr->type)) {
+	if (!is_inferred(expr->type.get_ttype_ptr())) {
 		type_error(expr->closing_paren, "Unable to infer function call return type.");
 	}
 }
 
 void TypeAnalyzer::substitute_return_expression(const std::shared_ptr<ReturnExpression>& expr) {
 	substitute_expression(expr->return_expression);
-	expr->type = substitute(expr->type);
+	expr->type = substitute(expr->type.get_ttype_ptr());
 
-	if (!is_inferred(expr->type)) {
+	if (!is_inferred(expr->type.get_ttype_ptr())) {
 		type_error(expr->return_tok, "Unable to infer return expression type.");
 	}
 }
 
 void TypeAnalyzer::substitute_cast_expression(const std::shared_ptr<CastExpression>& expr) {
 	substitute_expression(expr->expr);
-	expr->type = substitute(expr->cast_type);
+	expr->type = substitute(expr->cast_type->type.get_ttype_ptr());
 }
 
 void TypeAnalyzer::substitute_statement(const std::shared_ptr<Statement>& stmt) {
@@ -494,26 +543,26 @@ void TypeAnalyzer::substitute_expression_statement(const std::shared_ptr<Express
 
 void TypeAnalyzer::substitute_variable_declaration_statement(const std::shared_ptr<VariableDeclarationStatement>& stmt) {
 	substitute_expression(stmt->initializer);
-	stmt->type = substitute(stmt->type);
+	stmt->type->type.get_ttype_ptr() = substitute(stmt->type->type.get_ttype_ptr());
 
-	if (!is_inferred(stmt->type)) {
+	if (!is_inferred(stmt->type->type.get_ttype_ptr())) {
 		type_error(stmt->identifier->identifier, "Unable to infer variable type on declaration.");
 	}
 }
 
 void TypeAnalyzer::substitute_function_declaration_statement(const std::shared_ptr<FunctionDeclarationStatement>& stmt) {
-	stmt->return_type = substitute(stmt->return_type);
+	stmt->return_type->type.get_ttype_ptr() = substitute(stmt->return_type->type.get_ttype_ptr());
 	for (auto& param : stmt->params) {
-		param.first = substitute(param.first);
+		param.first->type.get_ttype_ptr() = substitute(param.first->type.get_ttype_ptr());
 
-		if (!is_inferred(param.first)) {
+		if (!is_inferred(param.first->type.get_ttype_ptr())) {
 			type_error(stmt->identifier->identifier, "Unable to infer function parameter type.");
 		}
 	}
 
 	substitute_block_expression(stmt->block);
 
-	if (!is_inferred(stmt->return_type)) {
+	if (!is_inferred(stmt->return_type->type.get_ttype_ptr())) {
 		type_error(stmt->identifier->identifier, "Unable to infer function return type.");
 	}
 }

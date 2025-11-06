@@ -2,9 +2,7 @@
 
 #include <memory>
 #include <stack>
-#include "Lexer.h"
 #include "Syntax.h"
-#include "Environment.h"
 #include "Types.h"
 
 constexpr uint8_t SZ_R{8u};
@@ -75,10 +73,6 @@ Register* get_next_reg(bool occupy = false, bool include_important = false);
 Register* occupy_reg(const RegisterName& name);
 Register* get_reg(const RegisterName& name, bool occupy = false);
 
-static std::shared_ptr<TConstructor> create_sz(TypeEnum t) {
-	return std::make_shared<TConstructor>(primitive_types.at(t));
-}
-
 struct ASMValHolder {
 	ASMValHolder() { }
 	ASMValHolder(const Type& type) : held_type{type} { }
@@ -94,7 +88,7 @@ struct ASMValRegister : public ASMValHolder {
 		: ASMValHolder{held_type}, reg{get_reg(RegisterName::Base)},
 		reg_size{SZ_R}, offset{offset} { }
 	ASMValRegister(const Type& held_type, Register* reg)
-		: ASMValHolder{held_type}, reg{reg}, reg_size{held_type->get_size()} { }
+		: ASMValHolder{held_type}, reg{reg}, reg_size{held_type.size} { }
 	ASMValRegister(const Type& held_type, Register* reg, bool dereferenced)
 		: ASMValHolder{held_type}, reg{reg},
 		dereferenced{dereferenced}, reg_size{SZ_R} { }
@@ -109,7 +103,7 @@ struct ASMValRegister : public ASMValHolder {
 	}
 
 	bool operator==(const ASMValRegister& reg) const noexcept {
-		return (cmp_types(held_type, reg.held_type) && *this->reg == *reg.reg &&
+		return (held_type == reg.held_type && *this->reg == *reg.reg &&
 				reg_size == reg.reg_size && offset == offset && dereferenced == reg.dereferenced);
 	}
 
@@ -145,7 +139,7 @@ struct ASMValNonRegister : public ASMValHolder {
 	}
 
 	bool operator==(const ASMValNonRegister& non) const noexcept {
-		return (cmp_types(held_type, non.held_type) && value == non.value);
+		return (held_type == non.held_type && value == non.value);
 	}
 };
 

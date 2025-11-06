@@ -45,8 +45,12 @@ private:
 	bool occurs_in(int index, const TType_ptr& type);
 	void unify(const TType_ptr& t1, const TType_ptr& t2);
 
-	void solve_constraints();
 	TType_ptr substitute(const TType_ptr& type);
+
+	void solve_constraints();
+
+	void resolve_parse_type(MixType& type);
+	void translate_ttype_ptr(MixType& type);
 
 	void infer_expression(const std::shared_ptr<Expression>& expr);
 	void infer_identifier_expression(const std::shared_ptr<IdentifierExpression>& expr);
@@ -58,6 +62,7 @@ private:
 	void infer_call_expression(const std::shared_ptr<CallExpression>& expr);
 	void infer_return_expression(const std::shared_ptr<ReturnExpression>& expr);
 	void infer_cast_expression(const std::shared_ptr<CastExpression>& expr);
+	void infer_type_expression(const std::shared_ptr<TypeExpression>& expr);
 	
 	void infer_statement(const std::shared_ptr<Statement>& stmt);
 	void infer_expression_statement(const std::shared_ptr<ExpressionStatement>& stmt);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <set>
+#include <ranges>
 #include "Types.h"
 
 struct Variable {
@@ -33,7 +34,7 @@ struct Function {
 	bool is_func(const MixType& return_type, const std::string& name, const std::vector<MixType>& args) const noexcept {
 		std::vector<Variable> var_args{
 			args
-			| std::views::transform([&](const MixType& t) -> Variable { return Variable{t, Token{"", TokenMixType::IDENTIFIER, 0u}}; })
+			| std::views::transform([&](const MixType& t) -> Variable { return Variable{t, Token{"", TokenType::IDENTIFIER, 0u}}; })
 			| std::ranges::to<std::vector>()
 		};
 		return *this == Function{return_type, Token{name}, var_args};

@@ -3,22 +3,65 @@
 #include <iostream>
 #include <memory>
 #include <variant>
+#include <concepts>
+#include <ranges>
 #include "Lexer.h"
+
+struct ParseType {
+	ParseType() { }
+	ParseType(const Token& token) { }
+	ParseType(const std::shared_ptr<ParseType>& t) { }
+
+	bool operator==(const ParseType& t) const noexcept {
+		if (type.has_value() && t.type.has_value()) {
+			if (std::holds_alternative<Token>(type.value()) &&
+				std::holds_alternative<Token>(t.type.value())) {
+				return std::get<Token>(type.value()).value ==
+					std::get<Token>(t.type.value()).value;
+			} else if (std::holds_alternative<std::shared_ptr<ParseType>>(type.value()) &&
+					std::holds_alternative<std::shared_ptr<ParseType>>(t.type.value())) {
+				return *std::get<std::shared_ptr<ParseType>>(type.value()) ==
+					*std::get<std::shared_ptr<ParseType>>(t.type.value());
+			}
+		}
+		return false;
+	}
+
+	void print(std::ostream& os) const noexcept {
+		if (type.has_value()) {
+			if (std::holds_alternative<Token>(type.value())) {
+				os << std::get<Token>(type.value());
+			} else {
+				std::get<std::shared_ptr<ParseType>>(type.value())->print(os);
+				os << '*';
+			}
+		} else {
+			os << "Unknown type";
+		}
+	}
+	
+	std::optional<std::variant<Token, std::shared_ptr<ParseType>>> type;
+};
 
 struct TType {
 	explicit TType() { }
 	virtual ~TType() = default;
 
 	virtual void print(std::ostream& os) const noexcept { }
+	virtual void println(std::ostream& os) const noexcept {
+		print(os);
+		os << std::endl;
+	}
 };
 
 using TType_ptr = std::shared_ptr<TType>;
 
 struct TConstructor : public TType {
-	TConstructor() : TType{} {}
-	explicit TConstructor(int type_id) : TType{}, type_id{type_id} {}
+	TConstructor() {}
+	explicit TConstructor(int type_id)
+		: type_id{type_id} {}
 	explicit TConstructor(int type_id, const std::vector<TType_ptr>& generics)
-		: TType{}, type_id{type_id}, generics{generics} {}
+		: type_id{type_id}, generics{generics} {}
 
 	bool operator==(const TConstructor& t) const noexcept {
 		return (type_id == t.type_id && generics == t.generics);
@@ -32,8 +75,8 @@ struct TConstructor : public TType {
 };
 
 struct TVariable : public TType {
-	TVariable() : TType{} {}
-	explicit TVariable(int idx) : TType{}, index{idx} {}
+	TVariable() {}
+	explicit TVariable(int idx) : index{idx} {}
 
 	bool operator==(const TVariable& t) const noexcept {
 		return (index == t.index);
@@ -48,8 +91,8 @@ struct TVariable : public TType {
 static bool cmp_types(const TType_ptr& t1, const TType_ptr& t2) noexcept;
 
 struct TPointer : public TType {
-	TPointer() : TType{} {}
-	explicit TPointer(const TType_ptr& t) : TType{}, inner{t} {}
+	TPointer() {}
+	explicit TPointer(const TType_ptr& t) : inner{t} {}
 
 	bool operator==(const TPointer& t) const noexcept {
 		return cmp_types(inner, t.inner);
@@ -90,25 +133,16 @@ static int type_id_inc{0};
 
 struct Type {
 	int type_id;
-	std::string name;
-	std::optional<Token> define_token;
 	uint8_t size;
+	std::shared_ptr<Type> point_to;
 
-	Type() : type_id{-1}, name{""}, define_token{Token{}}, size{0} { }
+	Type() : type_id{-1}, name{""}, size{0} { }
 
 	Type(int type_id, const Token& define_token, uint8_t size)
-		: type_id{type_id}, name{define_token.value}, define_token{define_token}, size{size} { }
-
-	Type(const std::string& name, uint8_t size)
-		: type_id{type_id_inc++}, name{name}, define_token{std::nullopt}, size{size} { }
+		: type_id{type_id}, name{define_token.value}, size{size} { }
 
 	void print(std::ostream& os) const noexcept {
-		if (define_token.has_value()) {
-			os << define_token.value();
-		} else {
-			os << name;
-		}
-		os << " (" << type_id << ")\n";
+		os << name << " (" << type_id << ")\n";
 	}
 
 	bool operator==(const Type& t) const noexcept {
@@ -121,16 +155,20 @@ struct overloaded : Ts... { using Ts::operator()...; };
 
 struct MixType {
 	MixType() {}
+	MixType(const ParseType& t) : type{t} {}
 	MixType(const TType_ptr& t) : type{t} {}
 	MixType(const Type& t) : type{t} {}
 
-	virtual void print(std::ostream& os = std::cout) {
+	virtual void print(std::ostream& os = std::cout) const noexcept {
 		std::visit(overloaded {
             [&](const TType_ptr& arg) { arg->print(os); },
-            [&](const Type& arg) { arg.print(os); }
+            [&](const auto& arg) { arg.print(os); }
         }, type);
     }
 
+	const ParseType& get_parse_type() const noexcept {
+		return std::get<ParseType>(type);
+	}
 	const Type& get_type() const noexcept {
 		return std::get<Type>(type);
 	}
@@ -138,6 +176,9 @@ struct MixType {
 		return std::get<TType_ptr>(type);
 	}
 
+	ParseType& get_parse_type() noexcept {
+		return std::get<ParseType>(type);
+	}
 	Type& get_type() noexcept {
 		return std::get<Type>(type);
 	}
@@ -145,13 +186,18 @@ struct MixType {
 		return std::get<TType_ptr>(type);
 	}
 
-	template <typename T>
+	template <typename T> requires
+		std::same_as<T, ParseType> or
+		std::same_as<T, TType_ptr> or
+		std::same_as<T, Type>
 	void operator=(const T& t) noexcept {
 		get_type<T>() = type;
 	}
 
 	bool operator==(const MixType& t) const noexcept {
-		if (std::holds_alternative<TType_ptr>(type) && std::holds_alternative<TType_ptr>(t.type)) {
+		if (std::holds_alternative<ParseType>(type) && std::holds_alternative<ParseType>(t.type)) {
+			return get_parse_type() == t.get_parse_type();
+		} else if (std::holds_alternative<TType_ptr>(type) && std::holds_alternative<TType_ptr>(t.type)) {
 			return cmp_types(get_ttype_ptr(), t.get_ttype_ptr());
 		} else if (std::holds_alternative<Type>(type) && std::holds_alternative<Type>(t.type)) {
 			return get_type() == t.get_type();
@@ -160,8 +206,21 @@ struct MixType {
 		}
 	}
 
+	std::optional<int> get_type_index() const noexcept {
+		if (std::holds_alternative<TType_ptr>(type)) {
+			if (auto con{std::dynamic_pointer_cast<TConstructor>(get_ttype_ptr())}) {
+				return con->type_id;
+			}
+		} else if (std::holds_alternative<Type>(type)) {
+			return get_type().type_id;
+		}
+		return std::nullopt;
+	}
+
 private:
-	std::variant<TType_ptr, Type> type{};
+	std::variant<ParseType, TType_ptr, Type> type{};
+	std::optional<Token> defined_at{}; // Primitives have no defined token
+	std::string name{};
 };
 
 enum class PrimitiveTypeEnum {

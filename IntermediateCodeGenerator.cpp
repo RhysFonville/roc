@@ -3,6 +3,7 @@
 #include <optional>
 #include "IntermediateCodeGenerator.h"
 #include "Lexer.h"
+#include "Environment.h"
 #include "Syntax.h"
 #include "Types.h"
 
@@ -76,8 +77,8 @@ inline void unoccupy_if_reg(ASMVal& value) {
 int IntermediateCodeGenerator::create_var(const std::string& identifier, const Type& type, bool neg) {
 	int offset{};
 	if (neg) {
-		stacks.top().neg_size -= type->get_size();
-		stacks.top().neg_size = ceiling_multiple(stacks.top().neg_size, type->get_size());
+		stacks.top().neg_size -= type.size;
+		stacks.top().neg_size = ceiling_multiple(stacks.top().neg_size, type.size);
 		offset = stacks.top().neg_size;
 	} else {
 		offset = stacks.top().pos_size;
@@ -242,7 +243,7 @@ ASMVal IntermediateCodeGenerator::unary_expression(const std::shared_ptr<UnaryEx
 		unoccupy_if_reg(rhs);
 		return ret;
 	} else if (expr->op.type == TokenType::STAR) {
-		ASMValRegister deref_reg{expr->type, reg, true};
+		ASMValRegister deref_reg{expr->type.get_type(), reg, true};
 		deref_reg.dereferenced = false;
 		insert_command(IRCommand{IRCommandType::MOVE, {
 			std::make_shared<ASMValRegister>(deref_reg), rhs, std::nullopt
@@ -256,6 +257,7 @@ ASMVal IntermediateCodeGenerator::unary_expression(const std::shared_ptr<UnaryEx
 	unoccupy_if_reg(rhs);
 	return std::make_shared<ASMValRegister>(rhs->held_type, reg);
 }
+
 ASMVal IntermediateCodeGenerator::binary_expression(const std::shared_ptr<BinaryExpression>& expr) {
 	ASMVal lhs{generate_expression(expr->sides.first)};
 	size_t lhs_cmd_insert_spot{commands_insert};
@@ -385,8 +387,8 @@ ASMVal IntermediateCodeGenerator::block_expression(const std::shared_ptr<BlockEx
 		pop_insert_spot();
 
 		insert_command(IRCommand{IRCommandType::ENTER_STACK, {
-			std::make_shared<ASMValNonRegister>(create_sz(TypeEnum::U64), std::to_string(-stacks.top().neg_size)),
-			std::make_shared<ASMValNonRegister>(create_sz(TypeEnum::BOOL), std::to_string(stacks.top().call_function)),
+			std::make_shared<ASMValNonRegister>(primitive_types.at(PrimitiveTypeEnum::U64), std::to_string(-stacks.top().neg_size)),
+			std::make_shared<ASMValNonRegister>(primitive_types.at(PrimitiveTypeEnum::BOOL), std::to_string(stacks.top().call_function)),
 			std::nullopt
 		}});
 
@@ -439,9 +441,9 @@ ASMVal IntermediateCodeGenerator::call_expression(const std::shared_ptr<CallExpr
 	*/
 
 	std::string name{std::dynamic_pointer_cast<IdentifierExpression>(expr->callee)->identifier.value};
-	std::vector<Type> args{
+	std::vector<MixType> args{
 		expr->args
-			| std::views::transform([](auto arg){return arg->type;})
+			| std::views::transform([](const auto& arg){return arg->type;})
 			| std::ranges::to<std::vector>()
 	};
 
@@ -476,8 +478,8 @@ ASMVal IntermediateCodeGenerator::call_expression(const std::shared_ptr<CallExpr
 
 ASMVal IntermediateCodeGenerator::return_expression(const std::shared_ptr<ReturnExpression>& expr, const std::shared_ptr<FunctionDeclarationStatement>& func) {
 	if (expr->return_expression != nullptr) {
-		Type mv_type{expr->type};
-		if (mv_type->get_size() < SZ_E) mv_type = create_sz(TypeEnum::U32);
+		Type mv_type{expr->type.get_type()};
+		if (mv_type.size < SZ_E) mv_type = primitive_types.at(PrimitiveTypeEnum::U32);
 		insert_command(IRCommand{IRCommandType::MOVE, {
 			std::make_shared<ASMValRegister>(mv_type, occupy_reg(RegisterName::Ret)),
 			generate_expression(expr->return_expression),
@@ -499,8 +501,8 @@ ASMVal IntermediateCodeGenerator::return_expression(const std::shared_ptr<Return
 		}
 		*/
 		insert_command(IRCommand{IRCommandType::EXIT_STACK, {
-			std::make_shared<ASMValNonRegister>(create_sz(TypeEnum::U64), std::to_string(-stacks.top().neg_size)),
-			std::make_shared<ASMValNonRegister>(create_sz(TypeEnum::BOOL), std::to_string(stacks.top().call_function)),
+			std::make_shared<ASMValNonRegister>(primitive_types.at(PrimitiveTypeEnum::U64), std::to_string(-stacks.top().neg_size)),
+			std::make_shared<ASMValNonRegister>(primitive_types.at(PrimitiveTypeEnum::BOOL), std::to_string(stacks.top().call_function)),
 			std::nullopt
 		}});
 		insert_command(IRCommand{IRCommandType::RET, {std::nullopt, std::nullopt, std::nullopt}});
@@ -514,7 +516,7 @@ ASMVal IntermediateCodeGenerator::return_expression(const std::shared_ptr<Return
 
 ASMVal IntermediateCodeGenerator::cast_expression(const std::shared_ptr<CastExpression>& expr) {
 	auto ret{generate_expression(expr->expr)};
-	ret->held_type = expr->type;
+	ret->held_type = expr->type.get_type();
 	return ret;
 }
 
@@ -547,7 +549,7 @@ void IntermediateCodeGenerator::variable_declaration_statement(const std::shared
 	}});
 
 	src_reg->reg->in_use = false;
-	create_var(stmt->identifier->identifier.value, stmt->type);
+	create_var(stmt->identifier->identifier.value, stmt->type->type.get_type());
 }
 
 void IntermediateCodeGenerator::function_declaration_statement(const std::shared_ptr<FunctionDeclarationStatement>& stmt) {

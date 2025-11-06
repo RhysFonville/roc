@@ -4,13 +4,12 @@
 #include <vector>
 #include <ostream>
 #include <map>
-#include <ranges>
 
 enum class TokenType {
 	// Standard operators.
 	LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
 	COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
-	AMPERSAND,
+	AMPERSAND, COLON,
 
 	// Bool operators.
 	NOT, NOT_EQUAL,
@@ -29,7 +28,7 @@ enum class TokenType {
 
 	// Keywords.
 	ELSE, FOR, IF, AS,
-	RETURN, WHILE,
+	RETURN, WHILE, LET,
 
 	// Misc.
 	END_OF_FILE
@@ -54,7 +53,8 @@ static const std::map<std::string, TokenType> keywords{
 	{"while",  TokenType::WHILE},
 	{"true",   TokenType::TRUE},
 	{"false",  TokenType::FALSE},
-	{"as",  TokenType::AS}
+	{"as",  TokenType::AS},
+	{"let", TokenType::LET}
 };
 
 static const std::vector<TokenType> literal_tokens{

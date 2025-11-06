@@ -28,16 +28,18 @@ private:
 
 	ParserException parse_error(const Token& tok, const std::string& message) const noexcept;
 
-	Token peek();
-	bool is_at_end();
-	bool check(TokenType type);
-	Token previous();
-	Token advance();
-	bool match(const std::vector<TokenType>& types);
+	Token peek() const noexcept;
+	bool is_at_end() const noexcept;
+	bool check(TokenType type) const noexcept;
+	bool check(const std::vector<TokenType>& types) const noexcept;
+	Token previous() const noexcept;
+	Token advance() noexcept;
+	bool match(TokenType type) noexcept;
+	bool match(const std::vector<TokenType>& types) noexcept;
 	Token consume(TokenType type, const std::string& message);
 	Token consume(const std::vector<TokenType>& types, const std::string& message);
 
-	void synchronize();
+	void synchronize() noexcept;
 	
 	std::shared_ptr<Expression> primary_expression();
 	std::shared_ptr<Expression> expression();
@@ -58,10 +60,10 @@ private:
 	std::shared_ptr<Expression> return_expression();
 	std::shared_ptr<Statement> statement();
 	std::shared_ptr<ExpressionStatement> expression_statement();
-	std::shared_ptr<Statement> declaration(const Type& type);
-	std::shared_ptr<VariableDeclarationStatement> variable_declaration(const Type& type, const Token& name);
-	std::shared_ptr<FunctionDeclarationStatement> function_declaration(const Type& type, const Token& name);
-	std::vector<std::pair<Type, Token>> parameters();
-	Type type(bool get_previous = false);
+	std::shared_ptr<VariableDeclarationStatement> variable_declaration(const std::shared_ptr<IdentifierExpression>& identifier);
+	std::shared_ptr<FunctionDeclarationStatement> function_declaration(const std::shared_ptr<IdentifierExpression>& identifier);
+	std::vector<std::pair<std::shared_ptr<TypeExpression>, std::shared_ptr<IdentifierExpression>>> parameters();
+	std::shared_ptr<TypeExpression> type_expression();
+	std::shared_ptr<IdentifierExpression> identifier_expression(const std::string& error_message = "Expected an identifier.");
 };
 

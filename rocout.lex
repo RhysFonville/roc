@@ -17,7 +17,6 @@
 23: x (line 3)
 8: ; (line 3)
 33: return (line 4)
-10: * (line 4)
 23: x (line 4)
 8: ; (line 4)
 3: } (line 5)

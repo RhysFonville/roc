@@ -145,6 +145,10 @@ void TypeAnalyzer::translate_ttype_ptr(MixType& type) { // TODO: Unnecessarily b
 	std::vector<Type> types{};
 	types.reserve(ptr_types.size());
 
+	if (std::dynamic_pointer_cast<TConstructor>(ptr_types.back()) == nullptr) {
+		return;
+	}
+
 	types.push_back(Type{std::dynamic_pointer_cast<TConstructor>(ptr_types.back())->type_id});
 	for (size_t i{1}; i < ptr_types.size(); i++) {
 		types.push_back(Type{std::make_shared<Type>(types[i-1])});
@@ -250,8 +254,10 @@ void TypeAnalyzer::infer_unary_expression(const std::shared_ptr<UnaryExpression>
 			if (is_pointer(expr->expr->type.get_ttype_ptr())) {
 				expr->type.get_ttype_ptr_opt() = std::dynamic_pointer_cast<TPointer>(expr->expr->type.get_ttype_ptr())->inner;
 			} else {
+				/*expr->type = fresh_type_variable();
+				type_constraints.push_back(std::make_shared<CEquality>(expr->expr->type.get_ttype_ptr(), std::make_shared<TPointer>(expr->type.get_ttype_ptr())));*/
 				expr->type = fresh_type_variable();
-				type_constraints.push_back(std::make_shared<CEquality>(expr->expr->type.get_ttype_ptr(), std::make_shared<TPointer>(expr->type.get_ttype_ptr())));
+				type_error(expr->op, "Attempting to dereference a non-pointer.");
 			}
 			return;
 		case TokenType::AMPERSAND:

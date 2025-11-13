@@ -1,3 +1,4 @@
+#include <ranges>
 #include "Lexer.h"
 #include "ErrorHandling.h"
 
@@ -20,6 +21,7 @@ void Lexer::scan_token() {
 		case '}': add_token(TokenType::RIGHT_BRACE); break;
 		case ',': add_token(TokenType::COMMA); break;
 		case '.': add_token(TokenType::DOT); break;
+		case ':': add_token(TokenType::COLON); break;
 		case '-':
 			if (std::isdigit(peek())) {
 				number(true);
@@ -115,28 +117,8 @@ void Lexer::char_lit() {
 }
 
 void Lexer::number(bool negative) {
-	while (std::isdigit(peek())) advance();
-
-	int current{this->current};
-	int start{this->start};
-	this->start = this->current;
-
 	identifier();
-
-	std::vector<TokenType> types{
-		  number_types
-		| std::views::values
-		| std::views::transform([](const PrimitiveType& t) { return t.keyword.second; })
-		| std::ranges::to<std::vector>()
-	};
-	if (std::ranges::find(types, tokens.back().type) == types.end()) {
-		this->current = current;
-	}
-
-	this->start = start;
-
-	tokens.pop_back();
-	add_token(TokenType::NUMBER_LITERAL);
+	tokens.back().type = TokenType::NUMBER_LITERAL;
 }
 
 void Lexer::identifier() {

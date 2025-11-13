@@ -23,8 +23,8 @@ enum class TokenType {
 	TRUE, FALSE,
 
 	// Primitive type keywords.
-	U8, U16, U32, U64, I8, I16,
-	I32, I64, BOOL, NONE, AUTO,
+	/*U8, U16, U32, U64, I8, I16,
+	I32, I64, BOOL, NONE, AUTO,*/
 
 	// Keywords.
 	ELSE, FOR, IF, AS,
@@ -35,17 +35,16 @@ enum class TokenType {
 };
 
 static const std::map<std::string, TokenType> keywords{
-	{"i8",    TokenType::I8},
-	{"i16",    TokenType::I16},
-	{"i32",    TokenType::I32},
-	{"i64",    TokenType::I64},
-	{"u8",    TokenType::U8},
-	{"u16",    TokenType::U16},
-	{"u32",    TokenType::U32},
-	{"u64",    TokenType::U64},
-	{"bool",   TokenType::BOOL},
-	{"none",   TokenType::NONE},
-	{"auto",   TokenType::AUTO},
+	{"i8",    TokenType::IDENTIFIER},
+	{"i16",    TokenType::IDENTIFIER},
+	{"i32",    TokenType::IDENTIFIER},
+	{"i64",    TokenType::IDENTIFIER},
+	{"u8",    TokenType::IDENTIFIER},
+	{"u16",    TokenType::IDENTIFIER},
+	{"u32",    TokenType::IDENTIFIER},
+	{"u64",    TokenType::IDENTIFIER},
+	{"bool",   TokenType::IDENTIFIER},
+	{"none",   TokenType::IDENTIFIER},
 	{"if",     TokenType::IF},
 	{"else",   TokenType::ELSE},
 	{"return", TokenType::RETURN},

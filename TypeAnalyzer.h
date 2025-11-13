@@ -79,6 +79,7 @@ private:
 	void substitute_call_expression(const std::shared_ptr<CallExpression>& expr);
 	void substitute_return_expression(const std::shared_ptr<ReturnExpression>& expr);
 	void substitute_cast_expression(const std::shared_ptr<CastExpression>& expr);
+	void substitute_type_expression(const std::shared_ptr<TypeExpression>& expr);
 	
 	void substitute_statement(const std::shared_ptr<Statement>& stmt);
 	void substitute_expression_statement(const std::shared_ptr<ExpressionStatement>& stmt);

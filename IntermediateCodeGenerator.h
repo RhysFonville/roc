@@ -122,6 +122,8 @@ struct ASMValRegister : public ASMValHolder {
 
 struct ASMValNonRegister : public ASMValHolder {
 	ASMValNonRegister() { }
+	ASMValNonRegister(const std::string& value)
+		: ASMValHolder{Type{}}, value{value}, is_var{false} { }
 	ASMValNonRegister(const Type& held_type, const std::string& value)
 		: ASMValHolder{held_type}, value{value}, is_var{false} { }
 	ASMValNonRegister(const Type& held_type, const std::string& value, bool is_var)

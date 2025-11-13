@@ -106,18 +106,31 @@ TType_ptr TypeAnalyzer::substitute(const TType_ptr& t) {
 
 void TypeAnalyzer::resolve_parse_type(MixType& type) {
 	if (type.get_parse_type().type.has_value()) {
-		if (std::holds_alternative<Token>(type.get_parse_type().type.value())) {
-			auto env_type{env_stack.get_identifier_type(std::get<Token>(type.get_parse_type().type.value()))};
-			if (env_type.has_value()) {
-				type.get_ttype_ptr() = std::make_shared<TConstructor>(env_type->get_type_index().value());
-			}
+		std::vector<ParseType> ptr_types{type.get_parse_type()};
+
+		if (!ptr_types[0].type.has_value()) {
+			type.get_ttype_ptr_opt() = nullptr;
+			return;
 		}
+
+		while (std::holds_alternative<std::shared_ptr<ParseType>>(ptr_types.back().type.value())) {
+			ptr_types.push_back(*std::get<std::shared_ptr<ParseType>>(ptr_types.back().type.value()));
+		}
+
+		std::vector<TType_ptr> types{};
+		types.reserve(ptr_types.size());
+
+		types.push_back(std::make_shared<TConstructor>(env_stack.get_type(std::get<Token>(ptr_types.back().type.value())).value().get_type_index().value()));
+		for (size_t i{1}; i < ptr_types.size(); i++) {
+			types.push_back(std::make_shared<TPointer>(TPointer{types[i-1]}));
+		}
+		type.get_ttype_ptr_opt() = types.back();
 	} else {
-		type.get_ttype_ptr() = nullptr;
+		type.get_ttype_ptr_opt() = fresh_type_variable();
 	}
 }
 
-void TypeAnalyzer::translate_ttype_ptr(MixType& type) {
+void TypeAnalyzer::translate_ttype_ptr(MixType& type) { // TODO: Unnecessarily bad
 	std::vector<TType_ptr> ptr_types{type.get_ttype_ptr()};
 
 	if (ptr_types[0] == nullptr) {
@@ -129,13 +142,14 @@ void TypeAnalyzer::translate_ttype_ptr(MixType& type) {
 		ptr_types.push_back(ptr->inner);
 	}
 
-	auto base_type{std::dynamic_pointer_cast<TConstructor>(ptr_types.back())};
-	type.get_type() = Type{base_type->type_id, type->
-	ptr_types.pop_back();
+	std::vector<Type> types{};
+	types.reserve(ptr_types.size());
 
-	for (const TType_ptr& ptr : ptr_types) {
-
+	types.push_back(Type{std::dynamic_pointer_cast<TConstructor>(ptr_types.back())->type_id});
+	for (size_t i{1}; i < ptr_types.size(); i++) {
+		types.push_back(Type{std::make_shared<Type>(types[i-1])});
 	}
+	type.get_type_opt() = types.back();
 }
 
 void TypeAnalyzer::solve_constraints() {
@@ -179,7 +193,7 @@ void TypeAnalyzer::infer_expression(const std::shared_ptr<Expression>& expr) {
 	} else if (auto cast{std::dynamic_pointer_cast<CastExpression>(expr)}) {
 		infer_cast_expression(cast);
 	} else {
-		expr->type.get_ttype_ptr() = nullptr;
+		expr->type.get_ttype_ptr_opt() = nullptr;
 	}
 }
 
@@ -195,54 +209,53 @@ void TypeAnalyzer::infer_literal_expression(const std::shared_ptr<LiteralExpress
 	switch (expr->value.type) {
 		case TokenType::TRUE:
 		case TokenType::FALSE:
-			expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::BOOL).type_id);
+			expr->type.get_ttype_ptr_opt() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::BOOL).type_id);
 			return;
 		case TokenType::NUMBER_LITERAL:
 			for (const auto& type : number_types | std::views::values) {
 				if (expr->value.value.ends_with(type.name)) {
-					expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(type.type_id);
+					expr->type.get_ttype_ptr_opt() = std::make_shared<TConstructor>(type.type_id);
 					return;
 				}
 			}
 			expr->type = fresh_type_variable();
 			return;
 		case TokenType::STRING_LITERAL:
-			expr->type.get_ttype_ptr() = std::make_shared<TPointer>(std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::I8).type_id));
+			expr->type.get_ttype_ptr_opt() = std::make_shared<TPointer>(std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::I8).type_id));
 			return;
 		case TokenType::CHAR_LITERAL:
-			expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::I8).type_id);
+			expr->type.get_ttype_ptr_opt() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::I8).type_id);
 			return;
 		default:
-			expr->type.get_ttype_ptr() = nullptr;
+			expr->type.get_ttype_ptr_opt() = nullptr;
 			return;
 	}
 }
 
 void TypeAnalyzer::infer_grouping_expression(const std::shared_ptr<GroupingExpression>& expr) {
 	infer_expression(expr->expr);
-	expr->type = fresh_type_variable();
-	type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->expr->type));
+	expr->type = expr->expr->type;
 }
 
 void TypeAnalyzer::infer_unary_expression(const std::shared_ptr<UnaryExpression>& expr) {
 	infer_expression(expr->expr);
 	switch (expr->op.type) {
 		case TokenType::NOT:
-			expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::BOOL).type_id);
+			expr->type.get_ttype_ptr_opt() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::BOOL).type_id);
 			return;
 		case TokenType::MINUS:
-			expr->type.get_ttype_ptr() = expr->expr->type.get_ttype_ptr();
+			expr->type.get_ttype_ptr_opt() = expr->expr->type.get_ttype_ptr_opt();
 			return;
 		case TokenType::STAR:
 			if (is_pointer(expr->expr->type.get_ttype_ptr())) {
-				expr->type.get_ttype_ptr() = std::dynamic_pointer_cast<TPointer>(expr->expr->type.get_ttype_ptr())->inner;
+				expr->type.get_ttype_ptr_opt() = std::dynamic_pointer_cast<TPointer>(expr->expr->type.get_ttype_ptr())->inner;
 			} else {
 				expr->type = fresh_type_variable();
-				type_constraints.push_back(std::make_shared<CEquality>(expr->expr->type, std::make_shared<TPointer>(expr->type)));
+				type_constraints.push_back(std::make_shared<CEquality>(expr->expr->type.get_ttype_ptr(), std::make_shared<TPointer>(expr->type.get_ttype_ptr())));
 			}
 			return;
 		case TokenType::AMPERSAND:
-			expr->type.get_ttype_ptr() = std::make_shared<TPointer>(expr->expr->type.get_ttype_ptr());
+			expr->type.get_ttype_ptr_opt() = std::make_shared<TPointer>(expr->expr->type.get_ttype_ptr());
 			return;
 		default:
 			type_error(expr->op, "Invalid unary operation.");
@@ -253,7 +266,7 @@ void TypeAnalyzer::infer_binary_expression(const std::shared_ptr<BinaryExpressio
 	infer_expression(expr->sides.first);
 	infer_expression(expr->sides.second);
 
-	type_constraints.push_back(std::make_shared<CEquality>(expr->sides.first->type, expr->sides.second->type));
+	type_constraints.push_back(std::make_shared<CEquality>(expr->sides.first->type.get_ttype_ptr(), expr->sides.second->type.get_ttype_ptr()));
 
 	switch (expr->op.type) {
 		case TokenType::PLUS:
@@ -261,8 +274,8 @@ void TypeAnalyzer::infer_binary_expression(const std::shared_ptr<BinaryExpressio
 		case TokenType::STAR:
 		case TokenType::SLASH:
 			expr->type = fresh_type_variable();
-			type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->sides.first->type));
-			type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->sides.second->type));
+			type_constraints.push_back(std::make_shared<CEquality>(expr->type.get_ttype_ptr(), expr->sides.first->type.get_ttype_ptr()));
+			type_constraints.push_back(std::make_shared<CEquality>(expr->type.get_ttype_ptr(), expr->sides.second->type.get_ttype_ptr()));
 			break;
 		case TokenType::EQUAL_EQUAL:
 		case TokenType::NOT_EQUAL:
@@ -271,13 +284,13 @@ void TypeAnalyzer::infer_binary_expression(const std::shared_ptr<BinaryExpressio
 		case TokenType::LESS:
 		case TokenType::LESS_EQUAL:
 		case TokenType::EQUAL:
-			expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::BOOL).type_id);
+			expr->type.get_ttype_ptr_opt() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::BOOL).type_id);
 			break;
 		case TokenType::AND:
 		case TokenType::OR:
-			expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::BOOL).type_id);
-			type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->sides.first->type));
-			type_constraints.push_back(std::make_shared<CEquality>(expr->type, expr->sides.second->type));
+			expr->type.get_ttype_ptr_opt() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::BOOL).type_id);
+			type_constraints.push_back(std::make_shared<CEquality>(expr->type.get_ttype_ptr(), expr->sides.first->type.get_ttype_ptr()));
+			type_constraints.push_back(std::make_shared<CEquality>(expr->type.get_ttype_ptr(), expr->sides.second->type.get_ttype_ptr()));
 			break;
 		default:
 			type_error(expr->op, "Invalid binary operation.");
@@ -290,7 +303,7 @@ void TypeAnalyzer::infer_block_expression(const std::shared_ptr<BlockExpression>
 	if (func != nullptr) {
 		for (const auto& param : func->params) {
 			resolve_parse_type(param.first->parse_type);
-			env_stack.back().variables.insert(Variable{param.first->parse_type, param.second});
+			env_stack.back().variables.push_back(Variable{param.first->parse_type, param.second->identifier});
 		}
 	}
 
@@ -308,10 +321,10 @@ void TypeAnalyzer::infer_block_expression(const std::shared_ptr<BlockExpression>
 	}
 
 	if (rets.empty()) {
-		expr->type.get_ttype_ptr() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::NONE).type_id);
+		expr->type.get_ttype_ptr_opt() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::NONE).type_id);
 	} else {
 		for (auto& ret : rets) {
-			type_constraints.push_back(std::make_shared<CEquality>(expr->type, rets[0].type));
+			type_constraints.push_back(std::make_shared<CEquality>(expr->type.get_ttype_ptr(), rets[0].type.get_ttype_ptr()));
 		}
 	}
 
@@ -330,7 +343,7 @@ void TypeAnalyzer::infer_call_expression(const std::shared_ptr<CallExpression>& 
 
 	for (int i{0}; i < std::min(func.args.size(), expr->args.size()); i++) {
 		infer_expression(expr->args[i]);
-		type_constraints.push_back(std::make_shared<CEquality>(expr->args[i]->type, func.args[i].type));
+		type_constraints.push_back(std::make_shared<CEquality>(expr->args[i]->type.get_ttype_ptr(), func.args[i].type.get_ttype_ptr()));
 	}
 }
 
@@ -366,22 +379,16 @@ void TypeAnalyzer::infer_expression_statement(const std::shared_ptr<ExpressionSt
 
 void TypeAnalyzer::infer_variable_declaration_statement(const std::shared_ptr<VariableDeclarationStatement>& stmt) {
 	infer_type_expression(stmt->type);
-	if (stmt->type == nullptr) {
-		stmt->type->type.get_ttype_ptr() = fresh_type_variable();
-	}
 
 	infer_expression(stmt->initializer);
 
-	type_constraints.push_back(std::make_shared<CEquality>(stmt->type, stmt->initializer->type));
+	type_constraints.push_back(std::make_shared<CEquality>(stmt->type->parse_type.get_ttype_ptr(), stmt->initializer->type.get_ttype_ptr()));
 
-	env_stack.back().variables.insert(Variable{stmt->type->type, stmt->identifier->identifier});
+	env_stack.back().variables.push_back(Variable{stmt->type->type, stmt->identifier->identifier});
 }
 
 void TypeAnalyzer::infer_function_declaration_statement(const std::shared_ptr<FunctionDeclarationStatement>& stmt) {
 	infer_type_expression(stmt->return_type);
-	if (stmt->return_type == nullptr) {
-		stmt->return_type->type = fresh_type_variable();
-	}
 
 	for (auto& param : stmt->params) {
 		infer_type_expression(param.first);
@@ -397,14 +404,14 @@ void TypeAnalyzer::infer_function_declaration_statement(const std::shared_ptr<Fu
 
 	env_stack = env_stack_copy;
 
-	type_constraints.push_back(std::make_shared<CEquality>(stmt->return_type, stmt->block->type));
+	type_constraints.push_back(std::make_shared<CEquality>(stmt->return_type->parse_type.get_ttype_ptr(), stmt->block->type.get_ttype_ptr()));
 
-	std::vector<Variable> params{(stmt->params | std::views::transform([&](const std::pair<std::shared_ptr<TypeExpression>, Token>& param) {
+	std::vector<Variable> params{(stmt->params | std::views::transform([&](const std::pair<std::shared_ptr<TypeExpression>, std::shared_ptr<IdentifierExpression>>& param) {
 		infer_type_expression(param.first);
-		return Variable{param.first->type, param.second};
+		return Variable{param.first->type, param.second->identifier};
 	})) | std::ranges::to<std::vector>()};
 
-	env_stack.back().functions.insert(Function{stmt->return_type->type, stmt->identifier->identifier, params});
+	env_stack.back().functions.push_back(Function{stmt->return_type->type, stmt->identifier->identifier, params});
 }
 
 void TypeAnalyzer::substitute_expression(const std::shared_ptr<Expression>& expr) {
@@ -426,7 +433,11 @@ void TypeAnalyzer::substitute_expression(const std::shared_ptr<Expression>& expr
 		substitute_return_expression(ret);
 	} else if (auto cast{std::dynamic_pointer_cast<CastExpression>(expr)}) {
 		substitute_cast_expression(cast);
+	} else if (auto type{std::dynamic_pointer_cast<TypeExpression>(expr)}) {
+		substitute_type_expression(type);
 	}
+
+	translate_ttype_ptr(expr->type);
 }
 
 void TypeAnalyzer::substitute_identifier_expression(const std::shared_ptr<IdentifierExpression>& expr) {
@@ -435,8 +446,6 @@ void TypeAnalyzer::substitute_identifier_expression(const std::shared_ptr<Identi
 	if (!is_inferred(expr->type.get_ttype_ptr())) {
 		type_error(expr->identifier, "Unable to infer identifier type.");
 	}
-
-	expr->type
 }
 
 void TypeAnalyzer::substitute_literal_expression(const std::shared_ptr<LiteralExpression>& expr) {
@@ -485,7 +494,7 @@ void TypeAnalyzer::substitute_block_expression(const std::shared_ptr<BlockExpres
 	}
 	
 	if (!rets.empty()) {
-		if (!std::all_of(rets.begin(), rets.end(), [&](const auto& ret) { return ret.type == rets.front().type; })) {
+		if (!std::ranges::all_of(rets, [&](const auto& ret) { return ret.type == rets.front().type; })) {
 			type_error(rets[0].return_tok, "All return types of a single block must be the same.");
 			return;
 		}
@@ -527,6 +536,11 @@ void TypeAnalyzer::substitute_cast_expression(const std::shared_ptr<CastExpressi
 	expr->type = substitute(expr->cast_type->type.get_ttype_ptr());
 }
 
+void TypeAnalyzer::substitute_type_expression(const std::shared_ptr<TypeExpression>& expr) {
+	expr->type = expr->parse_type;
+	translate_ttype_ptr(expr->parse_type);
+}
+
 void TypeAnalyzer::substitute_statement(const std::shared_ptr<Statement>& stmt) {
 	if (auto expr{std::dynamic_pointer_cast<ExpressionStatement>(stmt)}) {
 		return substitute_expression_statement(expr);
@@ -542,8 +556,10 @@ void TypeAnalyzer::substitute_expression_statement(const std::shared_ptr<Express
 }
 
 void TypeAnalyzer::substitute_variable_declaration_statement(const std::shared_ptr<VariableDeclarationStatement>& stmt) {
+	stmt->type->parse_type.get_ttype_ptr_opt() = substitute(stmt->type->type.get_ttype_ptr());
+	substitute_expression(stmt->type);
+
 	substitute_expression(stmt->initializer);
-	stmt->type->type.get_ttype_ptr() = substitute(stmt->type->type.get_ttype_ptr());
 
 	if (!is_inferred(stmt->type->type.get_ttype_ptr())) {
 		type_error(stmt->identifier->identifier, "Unable to infer variable type on declaration.");
@@ -551,16 +567,18 @@ void TypeAnalyzer::substitute_variable_declaration_statement(const std::shared_p
 }
 
 void TypeAnalyzer::substitute_function_declaration_statement(const std::shared_ptr<FunctionDeclarationStatement>& stmt) {
-	stmt->return_type->type.get_ttype_ptr() = substitute(stmt->return_type->type.get_ttype_ptr());
+	stmt->return_type->parse_type.get_ttype_ptr_opt() = substitute(stmt->return_type->type.get_ttype_ptr());
+	substitute_expression(stmt->return_type);
+
 	for (auto& param : stmt->params) {
-		param.first->type.get_ttype_ptr() = substitute(param.first->type.get_ttype_ptr());
+		param.first->type.get_ttype_ptr_opt() = substitute(param.first->type.get_ttype_ptr());
 
 		if (!is_inferred(param.first->type.get_ttype_ptr())) {
 			type_error(stmt->identifier->identifier, "Unable to infer function parameter type.");
 		}
 	}
 
-	substitute_block_expression(stmt->block);
+	substitute_expression(stmt->block);
 
 	if (!is_inferred(stmt->return_type->type.get_ttype_ptr())) {
 		type_error(stmt->identifier->identifier, "Unable to infer function return type.");

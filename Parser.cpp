@@ -284,10 +284,12 @@ std::shared_ptr<ExpressionStatement> Parser::expression_statement() {
 }
 
 std::shared_ptr<VariableDeclarationStatement> Parser::variable_declaration(const std::shared_ptr<IdentifierExpression>& identifier) {
-	auto type{std::make_shared<TypeExpression>(Token{})};
+	auto type{std::make_shared<TypeExpression>()};
 	if (match(TokenType::COLON)) {
-		type = std::make_shared<TypeExpression>(type_expression());
+		type = type_expression();
 	}
+
+	consume(TokenType::EQUAL, "Expected equal after variable name/type.");
 
 	auto initializer{expression()};
 	consume(TokenType::SEMICOLON, "Expected semi-colon after variable declaration statement.");
@@ -301,12 +303,11 @@ std::shared_ptr<VariableDeclarationStatement> Parser::variable_declaration(const
 std::shared_ptr<FunctionDeclarationStatement> Parser::function_declaration(const std::shared_ptr<IdentifierExpression>& identifier) {
 	auto params{parameters()};
 	
-	auto type{std::make_shared<TypeExpression>(Token{})};
+	auto type{std::make_shared<TypeExpression>()};
 	if (match(TokenType::COLON)) {
-		type = std::make_shared<TypeExpression>(type_expression());
+		type = type_expression();
 	}
 	
-	consume(TokenType::LEFT_BRACE, "Expected left brace.");
 	return std::make_shared<FunctionDeclarationStatement>(
 		type,
 		identifier,
@@ -334,7 +335,7 @@ std::vector<std::pair<std::shared_ptr<TypeExpression>, std::shared_ptr<Identifie
 }
 
 std::shared_ptr<TypeExpression> Parser::type_expression() {
-	std::shared_ptr<TypeExpression> ret{std::make_shared<TypeExpression>(consume(TokenType::IDENTIFIER, "Exprected a type name."))};
+	std::shared_ptr<TypeExpression> ret{std::make_shared<TypeExpression>(consume(TokenType::IDENTIFIER, "Expected a type name."))};
 
 	while (match(TokenType::STAR)) {
 		ret = std::make_shared<TypeExpression>(std::make_shared<TypeExpression>(ret));

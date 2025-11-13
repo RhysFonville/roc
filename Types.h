@@ -8,9 +8,9 @@
 #include "Lexer.h"
 
 struct ParseType {
-	ParseType() { }
-	ParseType(const Token& token) { }
-	ParseType(const std::shared_ptr<ParseType>& t) { }
+	ParseType() : type{std::nullopt} { }
+	ParseType(const Token& token) : type{token} { }
+	ParseType(const std::shared_ptr<ParseType>& t) : type{t} { }
 
 	bool operator==(const ParseType& t) const noexcept {
 		if (type.has_value() && t.type.has_value()) {
@@ -27,6 +27,19 @@ struct ParseType {
 		return false;
 	}
 
+	std::optional<Token> get_base_type_token() const noexcept {
+		if (type.has_value()) {
+			const ParseType* ptr{this};
+			while (std::holds_alternative<std::shared_ptr<ParseType>>(ptr->type.value())) {
+				ptr = std::get<std::shared_ptr<ParseType>>(ptr->type.value()).get();
+			}
+
+			return std::get<Token>(ptr->type.value());
+		}
+
+		return std::nullopt;
+	}
+
 	void print(std::ostream& os) const noexcept {
 		if (type.has_value()) {
 			if (std::holds_alternative<Token>(type.value())) {
@@ -39,7 +52,12 @@ struct ParseType {
 			os << "Unknown type";
 		}
 	}
+	void println(std::ostream& os = std::cout) const noexcept {
+		print(os);
+		os << std::endl;
+	}
 	
+	std::optional<int> type_id;
 	std::optional<std::variant<Token, std::shared_ptr<ParseType>>> type;
 };
 
@@ -136,17 +154,30 @@ struct Type {
 	uint8_t size;
 	std::shared_ptr<Type> point_to;
 
-	Type() : type_id{-1}, name{""}, size{0} { }
+	Type() : type_id{-1}, size{0} { }
 
-	Type(int type_id, const Token& define_token, uint8_t size)
-		: type_id{type_id}, name{define_token.value}, size{size} { }
+	Type(int type_id)
+		: type_id{type_id}, size{0} { }
+	
+	Type(const std::shared_ptr<Type>& point)
+		: point_to{point}, type_id{point->type_id}, size{sizeof(void*)} {}
+
+	Type(int type_id, uint8_t size) : type_id{type_id}, size{size} { }
 
 	void print(std::ostream& os) const noexcept {
-		os << name << " (" << type_id << ")\n";
+		os << type_id << " (sz " << std::to_string(size) << ")";
+	}
+	void println(std::ostream& os = std::cout) const noexcept {
+		print(os);
+		os << std::endl;
 	}
 
 	bool operator==(const Type& t) const noexcept {
 		return type_id == t.type_id;
+	}
+
+	bool operator<(const Type& t) const noexcept {
+		return type_id < t.type_id;
 	}
 };
 
@@ -155,72 +186,143 @@ struct overloaded : Ts... { using Ts::operator()...; };
 
 struct MixType {
 	MixType() {}
-	MixType(const ParseType& t) : type{t} {}
-	MixType(const TType_ptr& t) : type{t} {}
-	MixType(const Type& t) : type{t} {}
+	MixType(const ParseType& pt, const Type& t) : parse_type{pt}, type{t} {}
+	MixType(const ParseType& t) : parse_type{t} {}
 
 	virtual void print(std::ostream& os = std::cout) const noexcept {
-		std::visit(overloaded {
-            [&](const TType_ptr& arg) { arg->print(os); },
-            [&](const auto& arg) { arg.print(os); }
-        }, type);
+		if (type.has_value()) {
+			type.value().print(os);
+		} else if (ttype_ptr.has_value()) {
+			ttype_ptr.value()->print(os);
+		} else if (parse_type.has_value()) {
+			parse_type.value().print(os);
+		}
     }
 
+	void println(std::ostream& os = std::cout) const noexcept {
+		print(os);
+		os << std::endl;
+	}
+
+	void print_full(std::ostream& os = std::cout) const noexcept {
+		if (type.has_value()) {
+			type.value().print(os);
+		}
+		if (ttype_ptr.has_value()) {
+			ttype_ptr.value()->print(os);
+		}
+		if (parse_type.has_value()) {
+			parse_type.value().print(os);
+		}
+	}
+
+	void println_full(std::ostream& os = std::cout) const noexcept {
+		if (type.has_value()) {
+			type.value().println(os);
+		}
+		if (ttype_ptr.has_value()) {
+			ttype_ptr.value()->println(os);
+		}
+		if (parse_type.has_value()) {
+			parse_type.value().println(os);
+		}
+		os << std::endl;
+	}
+
 	const ParseType& get_parse_type() const noexcept {
-		return std::get<ParseType>(type);
+		return parse_type.value();
 	}
 	const Type& get_type() const noexcept {
-		return std::get<Type>(type);
+		return type.value();
 	}
 	const TType_ptr& get_ttype_ptr() const noexcept {
-		return std::get<TType_ptr>(type);
+		return ttype_ptr.value();
 	}
 
 	ParseType& get_parse_type() noexcept {
-		return std::get<ParseType>(type);
-	}
-	Type& get_type() noexcept {
-		return std::get<Type>(type);
+		return parse_type.value();
 	}
 	TType_ptr& get_ttype_ptr() noexcept {
-		return std::get<TType_ptr>(type);
+		return ttype_ptr.value();
+	}
+	Type& get_type() noexcept {
+		return type.value();
 	}
 
-	template <typename T> requires
-		std::same_as<T, ParseType> or
-		std::same_as<T, TType_ptr> or
-		std::same_as<T, Type>
-	void operator=(const T& t) noexcept {
-		get_type<T>() = type;
+	std::optional<ParseType>& get_parse_type_opt() noexcept {
+		return parse_type;
+	}
+	std::optional<TType_ptr>& get_ttype_ptr_opt() noexcept {
+		return ttype_ptr;
+	}
+	std::optional<Type>& get_type_opt() noexcept {
+		return type;
 	}
 
+	void operator=(const ParseType& t) noexcept {
+		get_parse_type_opt() = t;
+	}
+	void operator=(const TType_ptr& t) noexcept {
+		get_ttype_ptr_opt() = t;
+	}
+	void operator=(const Type& t) noexcept {
+		get_type_opt() = t;
+	}
+
+	bool operator==(const ParseType& t) noexcept {
+		return get_parse_type() == t;
+	}
+	bool operator==(const TType_ptr& t) noexcept {
+		return get_ttype_ptr() == t;
+	}
+	bool operator==(const Type& t) noexcept {
+		return get_type() == t;
+	}
 	bool operator==(const MixType& t) const noexcept {
-		if (std::holds_alternative<ParseType>(type) && std::holds_alternative<ParseType>(t.type)) {
-			return get_parse_type() == t.get_parse_type();
-		} else if (std::holds_alternative<TType_ptr>(type) && std::holds_alternative<TType_ptr>(t.type)) {
-			return cmp_types(get_ttype_ptr(), t.get_ttype_ptr());
-		} else if (std::holds_alternative<Type>(type) && std::holds_alternative<Type>(t.type)) {
-			return get_type() == t.get_type();
+		if (type.has_value() && t.type.has_value()) {
+			return type == t.type;
+		} else if (ttype_ptr.has_value() && t.ttype_ptr.has_value()) {
+			return ttype_ptr == t.ttype_ptr;
+		} else if (parse_type.has_value() && t.parse_type.has_value()) {
+			return parse_type == t.parse_type;
+		}
+		return false;
+	}
+
+	std::optional<int> get_type_index() const noexcept {
+		if (type.has_value()) {
+			return type.value().type_id;
+		} else if (ttype_ptr.has_value()) {
+			TType_ptr current_type{ttype_ptr.value()};
+			while (auto ptr{std::dynamic_pointer_cast<TPointer>(current_type)}) {
+				current_type = ptr->inner;
+			}
+
+			if (auto con{std::dynamic_pointer_cast<TConstructor>(current_type)}) {
+				return con->type_id;
+			}
+		} else if (parse_type.has_value()) {
+			if (parse_type.value().type_id.has_value()) {
+				return parse_type.value().type_id.value();
+			}
+		}
+		return std::nullopt;
+	}
+
+	bool is_pointer() const noexcept {
+		if (type.has_value()) {
+			return (type.value().point_to != nullptr);
+		} else if (ttype_ptr.has_value()) {
+			return (std::dynamic_pointer_cast<TPointer>(ttype_ptr.value()) != nullptr);
 		} else {
 			return false;
 		}
 	}
 
-	std::optional<int> get_type_index() const noexcept {
-		if (std::holds_alternative<TType_ptr>(type)) {
-			if (auto con{std::dynamic_pointer_cast<TConstructor>(get_ttype_ptr())}) {
-				return con->type_id;
-			}
-		} else if (std::holds_alternative<Type>(type)) {
-			return get_type().type_id;
-		}
-		return std::nullopt;
-	}
-
 private:
-	std::variant<ParseType, TType_ptr, Type> type{};
-	std::optional<Token> defined_at{}; // Primitives have no defined token
-	std::string name{};
+	std::optional<ParseType> parse_type{};
+	std::optional<TType_ptr> ttype_ptr{};
+	std::optional<Type> type{};
 };
 
 enum class PrimitiveTypeEnum {
@@ -230,7 +332,8 @@ enum class PrimitiveTypeEnum {
 class PrimitiveType : public Type {
 public:
 	PrimitiveType() {}
-	PrimitiveType(Type type, bool is_signed) : Type{type}, is_signed{is_signed} {}
+	PrimitiveType(const std::string& name, Type type, bool is_signed)
+		: Type{type}, name{name}, is_signed{is_signed} {}
 
 	bool operator==(const PrimitiveType& type) const {
 		return (Type::operator==(type) && is_signed == type.is_signed);
@@ -238,21 +341,25 @@ public:
 	bool operator!=(const PrimitiveType& type) const { return !(*this == type); }
 	friend inline std::ostream& operator<<(std::ostream& os, const PrimitiveType& type);
 
+	MixType to_mix_type() const noexcept {
+		return MixType{ParseType{Token{name, TokenType::IDENTIFIER, 0}}, (Type)*this};
+	}
+
 	bool is_signed{};
-	TokenType token_type{};
+	std::string name{};
 };
 
 static const std::map<PrimitiveTypeEnum, PrimitiveType> primitive_types{
-	{PrimitiveTypeEnum::I8,		PrimitiveType{Type{"i8",	sizeof(int8_t)},	true}},
-	{PrimitiveTypeEnum::I16,	PrimitiveType{Type{"i16",	sizeof(int16_t)},	true}},
-	{PrimitiveTypeEnum::I32,	PrimitiveType{Type{"i32",	sizeof(int32_t)},	true}},
-	{PrimitiveTypeEnum::I64,	PrimitiveType{Type{"i64",	sizeof(int64_t)},	true}},
-	{PrimitiveTypeEnum::U8,		PrimitiveType{Type{"u8",	sizeof(uint8_t)},	true}},
-	{PrimitiveTypeEnum::U16,	PrimitiveType{Type{"u16",	sizeof(uint16_t)},	true}},
-	{PrimitiveTypeEnum::U32,	PrimitiveType{Type{"u32",	sizeof(uint32_t)},	true}},
-	{PrimitiveTypeEnum::U64,	PrimitiveType{Type{"u64",	sizeof(uint64_t)},	true}},
-	{PrimitiveTypeEnum::BOOL,	PrimitiveType{Type{"bool",	sizeof(int8_t)},	true}},
-	{PrimitiveTypeEnum::NONE,	PrimitiveType{Type{"none",	sizeof(int8_t)},	true}},
+	{PrimitiveTypeEnum::I8,		PrimitiveType{"i8",		Type{type_id_inc++, (uint8_t)sizeof(int8_t)},		true}},
+	{PrimitiveTypeEnum::I16,	PrimitiveType{"i16",	Type{type_id_inc++, (uint8_t)sizeof(int16_t)},		true}},
+	{PrimitiveTypeEnum::I32,	PrimitiveType{"i32",	Type{type_id_inc++, (uint8_t)sizeof(int32_t)},		true}},
+	{PrimitiveTypeEnum::I64,	PrimitiveType{"i64",	Type{type_id_inc++, (uint8_t)sizeof(int64_t)},		true}},
+	{PrimitiveTypeEnum::U8,		PrimitiveType{"u8",		Type{type_id_inc++, (uint8_t)sizeof(uint8_t)},		true}},
+	{PrimitiveTypeEnum::U16,	PrimitiveType{"u16",	Type{type_id_inc++, (uint8_t)sizeof(uint16_t)},	true}},
+	{PrimitiveTypeEnum::U32,	PrimitiveType{"u32",	Type{type_id_inc++, (uint8_t)sizeof(uint32_t)},	true}},
+	{PrimitiveTypeEnum::U64,	PrimitiveType{"u64",	Type{type_id_inc++, (uint8_t)sizeof(uint64_t)},	true}},
+	{PrimitiveTypeEnum::BOOL,	PrimitiveType{"bool",	Type{type_id_inc++, (uint8_t)sizeof(int8_t)},		true}},
+	{PrimitiveTypeEnum::NONE,	PrimitiveType{"none",	Type{type_id_inc++, (uint8_t)sizeof(int8_t)},		true}},
 };
 
 static const std::map<PrimitiveTypeEnum, PrimitiveType> number_types{
@@ -261,19 +368,4 @@ static const std::map<PrimitiveTypeEnum, PrimitiveType> number_types{
 	*primitive_types.find(PrimitiveTypeEnum::U8), *primitive_types.find(PrimitiveTypeEnum::U16),
 	*primitive_types.find(PrimitiveTypeEnum::U32), *primitive_types.find(PrimitiveTypeEnum::U64)
 };
-
-static std::vector<TokenType> primitive_type_tokens() {
-	std::vector<TokenType> t{primitive_types | std::views::values | std::views::transform([](const auto& type) {
-		return type.token_type;
-	}) | std::ranges::to<std::vector>()};
-	t.insert(t.end(), TokenType::AUTO);
-	return t;
-}
-
-static std::optional<PrimitiveType> token_to_primitive_type(const Token& token) {
-	for (const PrimitiveType& type : primitive_types | std::views::values) {
-		if (type.token_type == token.type) return type;
-	}
-	return std::nullopt;
-}
 

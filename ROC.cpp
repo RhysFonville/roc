@@ -46,11 +46,11 @@ void ROC::run(const std::string& line) {
 void ROC::run(const std::ifstream& file) {
 	std::stringstream ss{};
 	ss << file.rdbuf();
+
 	Lexer lexer{ss.str()};
 	auto toks{lexer.run()};
 
 	std::cout << "Lexing completed.\n";
-
 	std::ofstream lex_out{"rocout.lex"};
 	for (auto tok : toks) {
 		lex_out << tok << '\n';
@@ -61,6 +61,11 @@ void ROC::run(const std::ifstream& file) {
 	auto stmts{parser.run()};
 
 	std::cout << "Parsing completed.\n";
+	std::ofstream parse_out{"rocout.parse"};
+	for (auto stmt : stmts) {
+		stmt->println(parse_out);
+	}
+	parse_out.close();
 	
 	TypeAnalyzer ta{stmts};
 	if (!ta.run()) return;

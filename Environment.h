@@ -41,25 +41,25 @@ struct Function {
 	}
 };
 
-const std::set<Function> NATIVE_FUNCTIONS{
+const std::vector<Function> NATIVE_FUNCTIONS{
 	Function{
-		primitive_types.at(PrimitiveTypeEnum::NONE), {"write"}, {
-			Variable{primitive_types.at(PrimitiveTypeEnum::I32), {"fd"}},
-			Variable{primitive_types.at(PrimitiveTypeEnum::I8), {"buf"}},
-			Variable{primitive_types.at(PrimitiveTypeEnum::I32), {"count"}}
+		primitive_types.at(PrimitiveTypeEnum::NONE).to_mix_type(), {"write"}, {
+			Variable{primitive_types.at(PrimitiveTypeEnum::I32).to_mix_type(), {"fd"}},
+			Variable{primitive_types.at(PrimitiveTypeEnum::I8).to_mix_type(), {"buf"}},
+			Variable{primitive_types.at(PrimitiveTypeEnum::I32).to_mix_type(), {"count"}}
 		}
 	}
 };
 
 struct Environment {
-	std::set<Variable> variables{};
-	std::set<Function> functions{};
-	std::set<Type> types{};
+	std::vector<Variable> variables{};
+	std::vector<Function> functions{};
+	std::vector<MixType> types{};
 };
 
 struct EnvironmentStack {
 	std::optional<Variable> get_variable(const Token& identifier) const noexcept {
-		for (auto env : envs) {
+		for (const auto& env : envs | std::views::reverse) {
 			auto var{std::ranges::find_if(env.variables, [&](auto v){
 				return v == identifier;
 			})};
@@ -71,7 +71,7 @@ struct EnvironmentStack {
 		return std::nullopt;
 	}
 	std::optional<Function> get_function(const Token& identifier) const noexcept {
-		for (auto env : envs) {
+		for (const auto& env : envs | std::views::reverse) {
 			auto func{std::ranges::find_if(env.functions, [&](auto f){
 				return f == identifier;
 			})};
@@ -91,6 +91,17 @@ struct EnvironmentStack {
 		else if (auto func{get_function(identifier)}) return func.value().return_type;
 		else return std::nullopt;
 	}
+	
+	std::optional<MixType> get_type(const Token& name) const noexcept {
+		for (const auto& env : envs | std::views::reverse) {
+			if (auto it{std::ranges::find_if(env.types, [&](const MixType& type) {
+				return type.get_parse_type().get_base_type_token().value().value == name.value;
+			})}; it != env.types.end()) {
+				return *it;
+			}
+		}
+		return std::nullopt;
+	}
 
 	Environment& back() { return envs.back(); }
 	void push(const Environment& env) { envs.push_back(env); }
@@ -99,8 +110,8 @@ struct EnvironmentStack {
 	std::vector<Environment> envs{Environment{{}, NATIVE_FUNCTIONS, {
 		primitive_types
 			| std::views::values
-			| std::views::transform([](const auto& t) -> Type { return (Type)t; })
-			| std::ranges::to<std::set>()
+			| std::views::transform([](const auto& t) { return t.to_mix_type(); })
+			| std::ranges::to<std::vector>()
 	}}};
 };
 

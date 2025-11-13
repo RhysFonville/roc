@@ -3,7 +3,6 @@
 #include <utility>
 #include <memory>
 #include <ostream>
-#include <variant>
 #include "Types.h"
 
 struct Expression {
@@ -124,13 +123,15 @@ struct ReturnExpression : public Expression {
 };
 
 struct TypeExpression : public Expression {
+	explicit TypeExpression()
+		: parse_type{ParseType{}} { }
 	explicit TypeExpression(const Token& name)
 		: parse_type{ParseType{name}} { }
 	explicit TypeExpression(const std::shared_ptr<TypeExpression>& ptr)
 		: parse_type{ParseType{ptr->parse_type.get_parse_type()}} { }
 
 	void print(std::ostream& os = std::cout) const noexcept override {
-		type.print(os);
+		parse_type.print(os);
 	}
 
 	MixType parse_type;
@@ -160,7 +161,7 @@ struct Statement {
 
 	void println(std::ostream& os = std::cout) const noexcept {
 		print(os);
-		std::cout << std::endl;
+		os << std::endl;
 	}
 };
 
@@ -211,7 +212,7 @@ struct VariableDeclarationStatement : public Statement {
 struct FunctionDeclarationStatement : public Statement {
 	explicit FunctionDeclarationStatement(const std::shared_ptr<TypeExpression>& return_type,
 		const std::shared_ptr<IdentifierExpression>& identifier,
-		const std::vector<std::pair<std::shared_ptr<TypeExpression>, Token>>& params,
+		const std::vector<std::pair<std::shared_ptr<TypeExpression>, std::shared_ptr<IdentifierExpression>>>& params,
 		const std::shared_ptr<BlockExpression>& block)
 		: return_type{return_type}, identifier{identifier}, params{params}, block{block} { }
 	
@@ -232,7 +233,7 @@ struct FunctionDeclarationStatement : public Statement {
 
 	std::shared_ptr<TypeExpression> return_type{};
 	std::shared_ptr<IdentifierExpression> identifier{};
-	std::vector<std::pair<std::shared_ptr<TypeExpression>, Token>> params{};
+	std::vector<std::pair<std::shared_ptr<TypeExpression>, std::shared_ptr<IdentifierExpression>>> params{};
 	std::shared_ptr<BlockExpression> block{};
 };
 

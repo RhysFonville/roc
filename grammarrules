@@ -92,16 +92,16 @@ statement
 	| expression_statement
 
 variable_declaration
-	: 'let' IDENTIFIER (':' type) '=' primary_expression ';'
+	: 'let' IDENTIFIER (':' type)? '=' primary_expression ';'
 
 function_declaration
-	: 'let' IDENTIFIER '(' parameters? ')' (';' type) block_expression
+	: 'let' IDENTIFIER '(' parameters? ')' (':' type)? block_expression
 
 parameters
 	:  (type ':')? IDENTIFIER (',' type_specifier IDENTIFIER)*
 
 type
-	: TYPE_SPECIFIER pointer*
+	: TYPE_SPECIFIER '*'*
 
 expression_statement
 	: expression ';'

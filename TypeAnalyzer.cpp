@@ -169,7 +169,11 @@ bool TypeAnalyzer::run() {
 	for (auto stmt : stmts) {
 		infer_statement(stmt);
 	}
+	if (!success) return success;
+
 	solve_constraints();
+	if (!success) return success;
+
 	for (auto stmt : stmts) {
 		substitute_statement(stmt);
 	}
@@ -330,7 +334,9 @@ void TypeAnalyzer::infer_block_expression(const std::shared_ptr<BlockExpression>
 		expr->type.get_ttype_ptr_opt() = std::make_shared<TConstructor>(primitive_types.at(PrimitiveTypeEnum::NONE).type_id);
 	} else {
 		for (auto& ret : rets) {
-			type_constraints.push_back(std::make_shared<CEquality>(expr->type.get_ttype_ptr(), rets[0].type.get_ttype_ptr()));
+			if (rets[0].type.get_ttype_ptr_opt().has_value()) {
+				type_constraints.push_back(std::make_shared<CEquality>(expr->type.get_ttype_ptr(), rets[0].type.get_ttype_ptr()));
+			}
 		}
 	}
 

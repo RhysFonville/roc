@@ -1,12 +1,11 @@
 FUNC main
-ENTER_STACK 8, 0
+ENTER_STACK 0, 0
 MOVE %(sz 0 RET), 5
 DECL_VAR x, %(sz 0 RET)
 LOAD %(sz 0 ARG1), x
-LEA %(sz 8 ARG2), %(sz 0 ARG1)
-MOVE %(sz 8 RET), %(sz 8 ARG2)
-DECL_VAR y, %(sz 8 RET)
-LOAD %(sz 0 ARG1), x
+MOVE %(sz 0 RET), %(sz 0 ARG1)
+DECL_VAR y, %(sz 0 RET)
+LOAD %(sz 0 ARG1), y
 MOVE %(sz 4 RET), %(sz 0 ARG1)
-EXIT_STACK 8, 0
+EXIT_STACK 0, 0
 RET 

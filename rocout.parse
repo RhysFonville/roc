@@ -2,7 +2,5 @@
 2: { (line 1)
 Unknown type 23: x (line 2)
 25: 5 (line 2)
-Unknown type 23: y (line 3)
-11: & (line 3) 23: x (line 3)
-0x6000038d80f8
+0x600003bf4018
 }

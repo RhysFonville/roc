@@ -73,13 +73,27 @@ Register* get_next_reg(bool occupy = false, bool include_important = false);
 Register* occupy_reg(const RegisterName& name);
 Register* get_reg(const RegisterName& name, bool occupy = false);
 
+static std::optional<PrimitiveType> to_primitive(const Type& type) noexcept {
+	static auto values{primitive_types | std::views::values};
+	if (auto it{std::ranges::find(values, type)}; it != values.end()) {
+		return *it;
+	} else {
+		return std::nullopt;
+	}
+}
+
 struct ASMValHolder {
 	ASMValHolder() { }
-	ASMValHolder(const Type& type) : held_type{type} { }
+	ASMValHolder(const Type& type) : held_type{to_primitive(type).value()} { }
+	ASMValHolder(const PrimitiveType& type) : held_type{type} { }
 
-	Type held_type{};
+	PrimitiveType held_type{};
 
 	virtual void print(std::ostream& os = std::cout) const noexcept = 0;
+	virtual void println(std::ostream& os = std::cout) const noexcept {
+		print(os);
+		os << std::endl;
+	}
 };
 
 struct ASMValRegister : public ASMValHolder {

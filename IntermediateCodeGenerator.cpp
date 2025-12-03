@@ -516,7 +516,7 @@ ASMVal IntermediateCodeGenerator::return_expression(const std::shared_ptr<Return
 
 ASMVal IntermediateCodeGenerator::cast_expression(const std::shared_ptr<CastExpression>& expr) {
 	auto ret{generate_expression(expr->expr)};
-	ret->held_type = expr->type.get_type();
+	ret->held_type = to_primitive(expr->type.get_type()).value();
 	return ret;
 }
 

@@ -149,9 +149,9 @@ void TypeAnalyzer::translate_ttype_ptr(MixType& type) { // TODO: Unnecessarily b
 		return;
 	}
 
-	types.push_back(Type{std::dynamic_pointer_cast<TConstructor>(ptr_types.back())->type_id});
+	types.push_back(env_stack.get_type(std::dynamic_pointer_cast<TConstructor>(ptr_types.back())->type_id)->get_type());
 	for (size_t i{1}; i < ptr_types.size(); i++) {
-		types.push_back(Type{std::make_shared<Type>(types[i-1])});
+		types.push_back(Type{std::make_shared<Type>(env_stack.get_type(types[i-1].type_id)->get_type())});
 	}
 	type.get_type_opt() = types.back();
 }

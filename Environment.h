@@ -103,6 +103,17 @@ struct EnvironmentStack {
 		return std::nullopt;
 	}
 
+	std::optional<MixType> get_type(const size_t type_id) const noexcept {
+		for (const auto& env : envs | std::views::reverse) {
+			if (auto it{std::ranges::find_if(env.types, [&](const MixType& type) {
+				return type.get_type().type_id == type_id;
+			})}; it != env.types.end()) {
+				return *it;
+			}
+		}
+		return std::nullopt;
+	}
+
 	Environment& back() { return envs.back(); }
 	void push(const Environment& env) { envs.push_back(env); }
 	void pop() { envs.pop_back(); }

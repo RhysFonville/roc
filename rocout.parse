@@ -1,6 +1,6 @@
-23: i32 (line 1) 23: main (line 1)( )
+23: i8 (line 1) 23: main (line 1)( )
 2: { (line 1)
 Unknown type 23: x (line 2)
 25: 5 (line 2)
-0x600003bf4018
+0x6000013f8018
 }

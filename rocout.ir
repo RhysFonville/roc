@@ -1,8 +1,9 @@
+LABEL .STR0
+DIRECTIVE asciz, "Hello"
 FUNC main
-ENTER_STACK 1, 0
-MOVE %(sz 1 RET), 5
-DECL_VAR x, %(sz 1 RET)
-LOAD %(sz 1 ARG1), x
-MOVE %(sz 4 RET), %(sz 1 ARG1)
-EXIT_STACK 1, 0
+ENTER_STACK 0, 0
+MOVE %(sz 8 ARG1), .STR0
+MOVE %(sz 1 ARG2), *%(sz 8 ARG1)
+MOVE %(sz 4 RET), %(sz 1 ARG2)
+EXIT_STACK 0, 0
 RET 

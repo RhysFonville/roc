@@ -338,7 +338,7 @@ std::shared_ptr<TypeExpression> Parser::type_expression() {
 	std::shared_ptr<TypeExpression> ret{std::make_shared<TypeExpression>(consume(TokenType::IDENTIFIER, "Expected a type name."))};
 
 	while (match(TokenType::STAR)) {
-		ret = std::make_shared<TypeExpression>(std::make_shared<TypeExpression>(ret));
+		ret = std::make_shared<TypeExpression>(TypeExpression{ret});
 	}
 
 	return ret;

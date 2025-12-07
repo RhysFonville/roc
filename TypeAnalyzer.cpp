@@ -258,10 +258,12 @@ void TypeAnalyzer::infer_unary_expression(const std::shared_ptr<UnaryExpression>
 			if (is_pointer(expr->expr->type.get_ttype_ptr())) {
 				expr->type.get_ttype_ptr_opt() = std::dynamic_pointer_cast<TPointer>(expr->expr->type.get_ttype_ptr())->inner;
 			} else {
-				/*expr->type = fresh_type_variable();
-				type_constraints.push_back(std::make_shared<CEquality>(expr->expr->type.get_ttype_ptr(), std::make_shared<TPointer>(expr->type.get_ttype_ptr())));*/
+				/*
 				expr->type = fresh_type_variable();
-				type_error(expr->op, "Attempting to dereference a non-pointer.");
+				type_constraints.push_back(std::make_shared<CEquality>(expr->expr->type.get_ttype_ptr(), std::make_shared<TPointer>(expr->type.get_ttype_ptr())));
+				*/
+				type_error(expr->op, "Pointer required for referencing.");
+				return;
 			}
 			return;
 		case TokenType::AMPERSAND:
@@ -312,7 +314,7 @@ void TypeAnalyzer::infer_block_expression(const std::shared_ptr<BlockExpression>
 
 	if (func != nullptr) {
 		for (const auto& param : func->params) {
-			resolve_parse_type(param.first->parse_type);
+			resolve_parse_type(param.first->type);
 			env_stack.back().variables.push_back(Variable{param.first->parse_type, param.second->identifier});
 		}
 	}
@@ -371,8 +373,8 @@ void TypeAnalyzer::infer_cast_expression(const std::shared_ptr<CastExpression>& 
 }
 
 void TypeAnalyzer::infer_type_expression(const std::shared_ptr<TypeExpression>& expr) {
-	resolve_parse_type(expr->parse_type);
-	expr->type = expr->parse_type;
+	expr->type.get_parse_type_opt() = expr->parse_type;
+	resolve_parse_type(expr->type);
 }
 
 void TypeAnalyzer::infer_statement(const std::shared_ptr<Statement>& stmt) {
@@ -394,7 +396,7 @@ void TypeAnalyzer::infer_variable_declaration_statement(const std::shared_ptr<Va
 
 	infer_expression(stmt->initializer);
 
-	type_constraints.push_back(std::make_shared<CEquality>(stmt->type->parse_type.get_ttype_ptr(), stmt->initializer->type.get_ttype_ptr()));
+	type_constraints.push_back(std::make_shared<CEquality>(stmt->type->type.get_ttype_ptr(), stmt->initializer->type.get_ttype_ptr()));
 
 	env_stack.back().variables.push_back(Variable{stmt->type->type, stmt->identifier->identifier});
 }
@@ -416,7 +418,7 @@ void TypeAnalyzer::infer_function_declaration_statement(const std::shared_ptr<Fu
 
 	env_stack = env_stack_copy;
 
-	type_constraints.push_back(std::make_shared<CEquality>(stmt->return_type->parse_type.get_ttype_ptr(), stmt->block->type.get_ttype_ptr()));
+	type_constraints.push_back(std::make_shared<CEquality>(stmt->return_type->type.get_ttype_ptr(), stmt->block->type.get_ttype_ptr()));
 
 	std::vector<Variable> params{(stmt->params | std::views::transform([&](const std::pair<std::shared_ptr<TypeExpression>, std::shared_ptr<IdentifierExpression>>& param) {
 		infer_type_expression(param.first);
@@ -550,7 +552,7 @@ void TypeAnalyzer::substitute_cast_expression(const std::shared_ptr<CastExpressi
 
 void TypeAnalyzer::substitute_type_expression(const std::shared_ptr<TypeExpression>& expr) {
 	expr->type = expr->parse_type;
-	translate_ttype_ptr(expr->parse_type);
+	translate_ttype_ptr(expr->type);
 }
 
 void TypeAnalyzer::substitute_statement(const std::shared_ptr<Statement>& stmt) {
@@ -568,7 +570,7 @@ void TypeAnalyzer::substitute_expression_statement(const std::shared_ptr<Express
 }
 
 void TypeAnalyzer::substitute_variable_declaration_statement(const std::shared_ptr<VariableDeclarationStatement>& stmt) {
-	stmt->type->parse_type.get_ttype_ptr_opt() = substitute(stmt->type->type.get_ttype_ptr());
+	stmt->type->type.get_ttype_ptr_opt() = substitute(stmt->type->type.get_ttype_ptr());
 	substitute_expression(stmt->type);
 
 	substitute_expression(stmt->initializer);
@@ -579,7 +581,7 @@ void TypeAnalyzer::substitute_variable_declaration_statement(const std::shared_p
 }
 
 void TypeAnalyzer::substitute_function_declaration_statement(const std::shared_ptr<FunctionDeclarationStatement>& stmt) {
-	stmt->return_type->parse_type.get_ttype_ptr_opt() = substitute(stmt->return_type->type.get_ttype_ptr());
+	stmt->return_type->type.get_ttype_ptr_opt() = substitute(stmt->return_type->type.get_ttype_ptr());
 	substitute_expression(stmt->return_type);
 
 	for (auto& param : stmt->params) {

@@ -20,7 +20,6 @@ static bool is_inferred(const TType_ptr& t) {
 	return false;
 }
 
-
 class TypeAnalyzer {
 public:
 	TypeAnalyzer(const std::vector<std::shared_ptr<Statement>>& stmts);

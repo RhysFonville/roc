@@ -204,7 +204,11 @@ ASMVal IntermediateCodeGenerator::literal_expression(const std::shared_ptr<Liter
 			std::nullopt
 		}});
 		pop_insert_spot();
-		return str;
+
+		auto reg = std::make_shared<ASMValRegister>(str->held_type, occupy_next_reg());
+		insert_command(IRCommand{IRCommand{IRCommandType::MOVE, {reg, str}}});
+
+		return reg;
 	} else if (expr->value.type == TokenType::NUMBER_LITERAL) {
 		auto end{std::ranges::find_if(expr->value.value, [](char c) { return std::isalpha(c); })};
 		if (end != expr->value.value.end()) {
@@ -243,19 +247,21 @@ ASMVal IntermediateCodeGenerator::unary_expression(const std::shared_ptr<UnaryEx
 		unoccupy_if_reg(rhs);
 		return ret;
 	} else if (expr->op.type == TokenType::STAR) {
-		ASMValRegister deref_reg{expr->type.get_type(), reg, true};
-		deref_reg.dereferenced = false;
+		auto deref_reg{std::make_shared<ASMValRegister>(
+			expr->type.get_type(),
+			reg
+		)};
+		auto deref_rhs{std::make_shared<ASMValRegister>(*std::dynamic_pointer_cast<ASMValRegister>(rhs))};
+		deref_rhs->dereferenced = true;
 		insert_command(IRCommand{IRCommandType::MOVE, {
-			std::make_shared<ASMValRegister>(deref_reg), rhs, std::nullopt
+			deref_reg, deref_rhs, std::nullopt
 		}});
-		deref_reg.dereferenced = true;
 
-		unoccupy_if_reg(rhs);
-		return std::make_shared<ASMValRegister>(deref_reg);
+		return deref_reg;
 	}
 
 	unoccupy_if_reg(rhs);
-	return std::make_shared<ASMValRegister>(rhs->held_type, reg);
+	return std::make_shared<ASMValRegister>(expr->type.get_type(), reg);
 }
 
 ASMVal IntermediateCodeGenerator::binary_expression(const std::shared_ptr<BinaryExpression>& expr) {
@@ -536,7 +542,7 @@ void IntermediateCodeGenerator::expression_statement(const std::shared_ptr<Expre
 }
 
 void IntermediateCodeGenerator::variable_declaration_statement(const std::shared_ptr<VariableDeclarationStatement>& stmt) {
-	auto src_reg{std::make_shared<ASMValRegister>(stmt->type->parse_type.get_type(), occupy_next_reg())};
+	auto src_reg{std::make_shared<ASMValRegister>(stmt->type->type.get_type(), occupy_next_reg())};
 	insert_command(IRCommand{IRCommandType::MOVE, {
 		src_reg,
 		generate_expression(stmt->initializer),
@@ -544,7 +550,7 @@ void IntermediateCodeGenerator::variable_declaration_statement(const std::shared
 	}});
 
 	insert_command(IRCommand{IRCommandType::DECL_VAR, {
-		std::make_shared<ASMValNonRegister>(stmt->type->parse_type.get_type(), stmt->identifier->identifier.value, true),
+		std::make_shared<ASMValNonRegister>(stmt->type->type.get_type(), stmt->identifier->identifier.value, true),
 		src_reg
 	}});
 
@@ -564,7 +570,7 @@ void IntermediateCodeGenerator::function_declaration_statement(const std::shared
 	push_insert_spot(0);
 
 	insert_command(IRCommand{IRCommandType::FUNC, {
-		std::make_shared<ASMValNonRegister>(stmt->return_type->parse_type.get_type(), name, true),
+		std::make_shared<ASMValNonRegister>(stmt->return_type->type.get_type(), name, true),
 		std::nullopt,
 		std::nullopt
 	}});

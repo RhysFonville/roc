@@ -84,10 +84,11 @@ static std::optional<PrimitiveType> to_primitive(const Type& type) noexcept {
 
 struct ASMValHolder {
 	ASMValHolder() { }
-	ASMValHolder(const Type& type) : held_type{to_primitive(type).value()} { }
-	ASMValHolder(const PrimitiveType& type) : held_type{type} { }
+	//ASMValHolder(const PrimitiveType& type) : held_type{type} { }
+	//ASMValHolder(const Type& type) : held_type{to_primitive(type).value()} { }
+	ASMValHolder(const Type& type) : held_type{type} { }
 
-	PrimitiveType held_type{};
+	Type held_type{};
 
 	virtual void print(std::ostream& os = std::cout) const noexcept = 0;
 	virtual void println(std::ostream& os = std::cout) const noexcept {
@@ -129,7 +130,7 @@ struct ASMValRegister : public ASMValHolder {
 			"STACK", "BASE", "INSTRUCTION",
 			"RETADDRESS"
 		};
-		os << "%(sz " << std::to_string(reg_size) << ' ' << reg_strs[(size_t)reg->name] << ')';
+		os << (dereferenced ? "*" : "") << "%(sz " << std::to_string(reg_size) << ' ' << reg_strs[(size_t)reg->name] << ')';
 		if (offset.has_value()) os << "-" << offset.value();
 	}
 };

@@ -128,13 +128,13 @@ struct TypeExpression : public Expression {
 	explicit TypeExpression(const Token& name)
 		: parse_type{ParseType{name}} { }
 	explicit TypeExpression(const std::shared_ptr<TypeExpression>& ptr)
-		: parse_type{ParseType{ptr->parse_type.get_parse_type()}} { }
+		: parse_type{std::make_shared<ParseType>(ptr->parse_type)} { }
 
 	void print(std::ostream& os = std::cout) const noexcept override {
 		parse_type.print(os);
 	}
 
-	MixType parse_type;
+	ParseType parse_type;
 };
 
 struct CastExpression : public Expression {

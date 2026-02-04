@@ -1,3 +1,16 @@
-let main(): i8 {
-	return *"Hello";
+let a = 5i32;
+
+let func1(): i32 {
+	{
+		let b = a;
+		{
+			let c = b;
+		};
+		b = c;
+	};
+	return b;
+}
+
+let main(): i32 {
+	return 0;
 }

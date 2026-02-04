@@ -3,6 +3,7 @@
 #include "Lexer.h"
 #include "Syntax.h"
 #include "Types.h"
+#include "ErrorHandling.h"
 
 void EnvironmentAnalyzer::semantic_error(const Token& token, const std::string& message) {
 	error(token, message);
@@ -33,6 +34,8 @@ void EnvironmentAnalyzer::check_expression(const std::shared_ptr<Expression>& ex
 		call_expression(call);
 	} else if (auto ret{std::dynamic_pointer_cast<ReturnExpression>(expr)}) {
 		return_expression(ret);
+	} else if (auto cast{std::dynamic_pointer_cast<CastExpression>(expr)}) {
+		cast_expression(cast);
 	}
 }
 
@@ -233,6 +236,10 @@ void EnvironmentAnalyzer::call_expression(const std::shared_ptr<CallExpression>&
 
 void EnvironmentAnalyzer::return_expression(const std::shared_ptr<ReturnExpression>& expr) {
 	check_expression(expr->return_expression);
+}
+
+void EnvironmentAnalyzer::cast_expression(const std::shared_ptr<CastExpression>& expr) {
+	check_expression(expr->expr);
 }
 
 void EnvironmentAnalyzer::check_statement(const std::shared_ptr<Statement>& statement) {

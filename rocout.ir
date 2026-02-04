@@ -1,9 +1,0 @@
-LABEL .STR0
-DIRECTIVE asciz, "Hello"
-FUNC main
-ENTER_STACK 0, 0
-MOVE %(sz 8 ARG1), .STR0
-MOVE %(sz 1 ARG2), *%(sz 8 ARG1)
-MOVE %(sz 4 RET), %(sz 1 ARG2)
-EXIT_STACK 0, 0
-RET 

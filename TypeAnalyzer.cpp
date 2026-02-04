@@ -346,18 +346,21 @@ void TypeAnalyzer::infer_block_expression(const std::shared_ptr<BlockExpression>
 }
 
 void TypeAnalyzer::infer_call_expression(const std::shared_ptr<CallExpression>& expr) {
-	Function func{env_stack.get_function(std::static_pointer_cast<IdentifierExpression>(expr->callee)->identifier).value()};
-	expr->type = func.return_type;
+	std::optional<Function> func{env_stack.get_function(std::static_pointer_cast<IdentifierExpression>(expr->callee)->identifier)};
+	if (!func.has_value()) {
+		type_error(expr->closing_paren, "Function not defined.");
+	}
+	expr->type = func->return_type;
 
 	infer_expression(expr->callee);
 
-	if (func.args.size() != expr->args.size()) {
+	if (func->args.size() != expr->args.size()) {
 		type_error(expr->closing_paren, "Different number of arguments than parameters.");
 	}
 
-	for (int i{0}; i < std::min(func.args.size(), expr->args.size()); i++) {
+	for (int i{0}; i < std::min(func->args.size(), expr->args.size()); i++) {
 		infer_expression(expr->args[i]);
-		type_constraints.push_back(std::make_shared<CEquality>(expr->args[i]->type.get_ttype_ptr(), func.args[i].type.get_ttype_ptr()));
+		type_constraints.push_back(std::make_shared<CEquality>(expr->args[i]->type.get_ttype_ptr(), func->args[i].type.get_ttype_ptr()));
 	}
 }
 

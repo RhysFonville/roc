@@ -1,4 +1,11 @@
-23: i8 (line 1) 23: main (line 1)( )
-2: { (line 1)
-0x6000033641d8
+Unknown type 23: a (line 1)
+25: 5i32 (line 1)
+23: i32 (line 3) 23: func1 (line 3)( )
+2: { (line 3)
+0x600002464478
+0x600002464558
+}
+23: i32 (line 14) 23: main (line 14)( )
+2: { (line 14)
+0x600002464718
 }

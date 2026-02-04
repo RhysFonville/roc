@@ -1,16 +1,9 @@
 #pragma once
 
 #include <memory>
-#include <optional>
-#include <set>
-#include <ranges>
-#include <algorithm>
-#include <limits>
 #include "Lexer.h"
 #include "Syntax.h"
-#include "ErrorHandling.h"
 #include "Environment.h"
-#include "Types.h"
 
 class EnvironmentAnalyzer {
 public:
@@ -35,6 +28,7 @@ private:
 	void block_expression(const std::shared_ptr<BlockExpression>& expr, const std::vector<Variable>& vars = {});
 	void call_expression(const std::shared_ptr<CallExpression>& expr);
 	void return_expression(const std::shared_ptr<ReturnExpression>& expr);
+	void cast_expression(const std::shared_ptr<CastExpression>& expr);
 	
 	void check_statement(const std::shared_ptr<Statement>& statement);
 	void expression_statement(const std::shared_ptr<ExpressionStatement>& stmt);
